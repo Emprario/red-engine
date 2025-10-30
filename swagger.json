@@ -337,6 +337,9 @@
           },
           "403": {
             "description": "Failed to login with these creds."
+          },
+          "404": {
+            "description": "User not found !"
           }
         }
       }

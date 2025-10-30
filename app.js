@@ -1,13 +1,15 @@
-const express = require('express');
-const cors = require('cors');
-require('dotenv').config()
-const {swaggerUi, specs} = require('./swagger');
+import express from 'express';
+import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
+import {specs} from './swagger.js';
 
-const indexRouter = require('./routes/index');
-//const authRouter = require('./routes/auth');
-//const postRouter = require('./routes/post');
-//const videoGameDiscoverRouter = require('./routes/vgd');
-const {verifyToken} = require('./jwt');
+
+
+import indexRouter from './routes/index.js';
+import authRouter from './routes/auth.js';
+//import postRouter from './routes/post.js';
+//import videoGameDiscoverRouter from './routes/vgd.js';
+import {verifyToken} from './jwt.js';
 
 const app = express();
 
@@ -16,7 +18,7 @@ app.use(express.urlencoded({extended: false}));
 app.use(express.static('public'));
 app.use(cors({
   origin: "http://localhost:5173",
-  methods: ["GET", "POST", "PATCH", "DELETE"],
+  methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
   credentials: true
 }));
 
@@ -24,7 +26,7 @@ app.use(cors({
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 // Unauthenticated access
-//app.use('/auth', authRouter);
+app.use('/auth', authRouter);
 
 // Middleware auth
 app.use((req, res, next) => {
@@ -55,4 +57,4 @@ app.use((req, res, next) => {
 });
 
 
-module.exports = app;
+export default app;
