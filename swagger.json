@@ -1,0 +1,726 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Your API Documentation",
+    "version": "1.0.0",
+    "description": "API documentation for your Express.js app"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Authenfication",
+      "description": "The authentification routes"
+    },
+    {
+      "name": "Post",
+      "description": "All post relative routes"
+    },
+    {
+      "name": "User",
+      "description": "Everything you have to know about current user"
+    },
+    {
+      "name": "VideoGame Discovery",
+      "description": "Only for vgd managers"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "barerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "login": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "$ref": "#/components/schemas/username"
+          },
+          "password": {
+            "$ref": "#/components/schemas/password"
+          }
+        }
+      },
+      "signIn": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "$ref": "#/components/schemas/username"
+          },
+          "mail": {
+            "$ref": "#/components/schemas/mail"
+          },
+          "password": {
+            "$ref": "#/components/schemas/password"
+          }
+        }
+      },
+      "getPost": {
+        "type": "object",
+        "properties": {
+          "id_post": {
+            "$ref": "#/components/schemas/id_post"
+          },
+          "title": {
+            "$ref": "#/components/schemas/title"
+          },
+          "content": {
+            "$ref": "#/components/schemas/content"
+          },
+          "publish_date": {
+            "$ref": "#/components/schemas/publish_date"
+          },
+          "publisher": {
+            "$ref": "#/components/schemas/username"
+          },
+          "qsetArray": {
+            "$ref": "#/components/schemas/qsetArray"
+          }
+        }
+      },
+      "newPost": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "$ref": "#/components/schemas/title"
+          },
+          "content": {
+            "$ref": "#/components/schemas/content"
+          },
+          "qsetArray": {
+            "$ref": "#/components/schemas/qsetArray"
+          }
+        }
+      },
+      "getReply": {
+        "type": "object",
+        "properties": {
+          "id_post": {
+            "$ref": "#/components/schemas/id_post"
+          },
+          "content": {
+            "$ref": "#/components/schemas/content"
+          },
+          "publish_date": {
+            "$ref": "#/components/schemas/publish_date"
+          },
+          "publisher": {
+            "$ref": "#/components/schemas/username"
+          }
+        }
+      },
+      "newReply": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "$ref": "#/components/schemas/content"
+          }
+        }
+      },
+      "qsetArray": {
+        "type": "array",
+        "items": {
+          "oneOf": [
+            {
+              "$ref": "#/components/schemas/qset"
+            },
+            {
+              "$ref": "#/components/schemas/qsetNoID"
+            }
+          ]
+        }
+      },
+      "qsetNoID": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "$ref": "#/components/schemas/prompt"
+          },
+          "ressource_type": {
+            "$ref": "#/components/schemas/ressource_type"
+          },
+          "ressource_link": {
+            "$ref": "#/components/schemas/ressource_link"
+          },
+          "questionArray": {
+            "$ref": "#/components/schemas/questionArray"
+          }
+        }
+      },
+      "qset": {
+        "type": "object",
+        "properties": {
+          "id_qset": {
+            "$ref": "#/components/schemas/id_qset"
+          },
+          "prompt": {
+            "$ref": "#/components/schemas/prompt"
+          },
+          "ressource_type": {
+            "$ref": "#/components/schemas/ressource_type"
+          },
+          "ressource_link": {
+            "$ref": "#/components/schemas/ressource_link"
+          },
+          "questionArray": {
+            "$ref": "#/components/schemas/questionArray"
+          }
+        }
+      },
+      "questionArray": {
+        "type": "array",
+        "items": {
+          "oneOf": [
+            {
+              "$ref": "#/components/schemas/question"
+            },
+            {
+              "$ref": "#/components/schemas/questionNoID"
+            }
+          ]
+        }
+      },
+      "question": {
+        "type": "object",
+        "properties": {
+          "id_question": {
+            "$ref": "#/components/schemas/id_question"
+          },
+          "is_correct": {
+            "$ref": "#/components/schemas/is_correct"
+          },
+          "statement": {
+            "$ref": "#/components/schemas/statement"
+          }
+        }
+      },
+      "questionNoID": {
+        "type": "object",
+        "properties": {
+          "is_correct": {
+            "$ref": "#/components/schemas/is_correct"
+          },
+          "statement": {
+            "$ref": "#/components/schemas/statement"
+          }
+        }
+      },
+      "u": {
+        "type": "integer",
+        "example": "1",
+        "description": "u takes only id no username"
+      },
+      "q": {
+        "type": "string",
+        "example": "Query%20Example",
+        "description": "The query is url encoded"
+      },
+      "gs": {
+        "type": "string",
+        "example": "0%201%208",
+        "description": "The list is separated by space %20"
+      },
+      "username": {
+        "type": "string",
+        "example": "myusername"
+      },
+      "mail": {
+        "type": "string",
+        "example": "mail@example.com"
+      },
+      "password": {
+        "type": "string",
+        "format": "password",
+        "example": "clearpassword"
+      },
+      "token": {
+        "type": "string",
+        "example": "jwt token like (TODO)"
+      },
+      "id_post": {
+        "type": "integer",
+        "example": 1
+      },
+      "title": {
+        "type": "string",
+        "example": "Hello World !"
+      },
+      "content": {
+        "type": "string",
+        "example": "My name is Nico."
+      },
+      "id_question": {
+        "type": "integer",
+        "example": 1
+      },
+      "is_correct": {
+        "type": "boolean",
+        "example": true
+      },
+      "statement": {
+        "type": "string",
+        "example": "A example of an affirmation."
+      },
+      "id_qset": {
+        "type": "integer",
+        "example": 1
+      },
+      "prompt": {
+        "type": "string",
+        "example": "What is the correct answer ?"
+      },
+      "ressource_type": {
+        "type": "string",
+        "example": "image"
+      },
+      "ressource_link": {
+        "type": "string",
+        "example": "https://cdn.example.com/image.jpg"
+      },
+      "publish_date": {
+        "type": "string",
+        "format": "date-time",
+        "example": "2017-07-21T17:32:28Z"
+      },
+      "amount": {
+        "type": "integer",
+        "example": 169
+      }
+    },
+    "responses": {
+      "401": {
+        "description": "Unauthorized, must provide an authentification bearer jwt"
+      },
+      "403": {
+        "description": "Although your token is valid, you don't the rights to do so"
+      }
+    }
+  },
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "description": "Login with body credentials",
+        "tags": [
+          "Authenfication"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/login"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful login !",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "$ref": "#/components/schemas/token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Failed to login with these creds."
+          }
+        }
+      }
+    },
+    "/auth/sign-in": {
+      "post": {
+        "description": "Sign-in to the website",
+        "tags": [
+          "Authenfication"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/signIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "You account have been created!"
+          },
+          "400": {
+            "description": "Bad information provided"
+          }
+        }
+      }
+    },
+    "/post": {
+      "get": {
+        "description": "Query some posts",
+        "tags": [
+          "Post"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "gs",
+            "description": "The gamescope is selection of the game you want to search for. The list is separated by dash -",
+            "schema": {
+              "$ref": "#/components/schemas/gs"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "description": "The query (q) parameter is based text you want to search for in the title.",
+            "schema": {
+              "$ref": "#/components/schemas/q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "u",
+            "description": "The user parameter is to select post for only one user (id).",
+            "schema": {
+              "$ref": "#/components/schemas/u"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return the result from db",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/getPost"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad information provided"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      },
+      "post": {
+        "description": "Post a new post",
+        "tags": [
+          "Post"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/newPost"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "New post created !"
+          },
+          "400": {
+            "description": "Bad information provided"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      }
+    },
+    "/post/{postId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "postId",
+          "schema": {
+            "$ref": "#/components/schemas/id_post"
+          },
+          "required": true,
+          "description": "The post Id to manage"
+        }
+      ],
+      "get": {
+        "description": "Fetch a specific post and its replies",
+        "tags": [
+          "Post"
+        ],
+        "responses": {
+          "200": {
+            "description": "Return the result from db",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "post": {
+                      "$ref": "#/components/schemas/getPost"
+                    },
+                    "replies": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/getReply"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "description": "Post not found"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Post"
+        ],
+        "description": "Reply to a specific post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/newReply"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "New reply created !"
+          },
+          "400": {
+            "description": "Bad information provided"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "description": "Post not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Post"
+        ],
+        "description": "Modify a a specific post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/newReply"
+                  },
+                  {
+                    "$ref": "#/components/schemas/newPost"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reply modified !"
+          },
+          "400": {
+            "description": "Bad information provided"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "description": "Post not found"
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete a specific post and its replies",
+        "tags": [
+          "Post"
+        ],
+        "responses": {
+          "200": {
+            "description": "Reply deleted !"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "description": "Post not found"
+          }
+        }
+      }
+    },
+    "/post/{postId}/play": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "postId",
+          "schema": {
+            "$ref": "#/components/schemas/id_post"
+          },
+          "required": true,
+          "description": "The post Id to manage"
+        }
+      ],
+      "get": {
+        "description": "Get amount of plays (likes) of a specific post",
+        "tags": [
+          "Post"
+        ],
+        "responses": {
+          "200": {
+            "description": "Return the result from db",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "amount": {
+                      "$ref": "#/components/schemas/amount"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "description": "Post not found"
+          }
+        }
+      },
+      "post": {
+        "description": "User play (like) of a specific post",
+        "tags": [
+          "Post"
+        ],
+        "responses": {
+          "201": {
+            "description": "New play created !"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "description": "Post not found"
+          }
+        }
+      },
+      "delete": {
+        "description": "User retrieve play (like) of a specific post",
+        "tags": [
+          "Post"
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted play !"
+          },
+          "400": {
+            "description": "Cannot delete your (none) play - please play first"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "description": "Post not found"
+          }
+        }
+      }
+    },
+    "/post/{postId}/signal": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "postId",
+          "schema": {
+            "$ref": "#/components/schemas/id_post"
+          },
+          "required": true,
+          "description": "The post Id to manage"
+        }
+      ],
+      "get": {
+        "description": "Get amount of signals of a specific post",
+        "tags": [
+          "Post"
+        ],
+        "responses": {
+          "200": {
+            "description": "Return the result from db",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "amount": {
+                      "$ref": "#/components/schemas/amount"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "description": "Post not found"
+          }
+        }
+      },
+      "post": {
+        "description": "User signal a specific post",
+        "tags": [
+          "Post"
+        ],
+        "responses": {
+          "201": {
+            "description": "New signal created !"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "description": "Post not found"
+          }
+        }
+      }
+    }
+  },
+  "security": []
+}
