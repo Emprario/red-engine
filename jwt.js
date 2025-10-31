@@ -6,7 +6,7 @@ dotenv.config();
 
 
 const secretKey = process.env.SECRET
-const saltRounds = process.env.SALT_ROUNDS
+const saltRounds = parseInt(process.env.SALT_ROUNDS)
 
 export function generateToken(id) {
   const payload = { id };

@@ -5,10 +5,8 @@
  */
 
 import app from '../app.js';
-import debug from 'debug';
+import dc from '../debugcon.js';
 import http from 'http';
-
-const debugserve = debug('red-engine:server');
 
 /**
  * Get port from environment and store in Express.
@@ -88,5 +86,5 @@ function onListening() {
   const bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-  debugserve('Listening on ' + bind);
+  dc.svCon('Listening on ' + bind);
 }

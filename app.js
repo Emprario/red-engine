@@ -1,10 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
+
 import {specs} from './swagger.js';
-
-
-
 import indexRouter from './routes/index.js';
 import authRouter from './routes/auth.js';
 //import postRouter from './routes/post.js';
