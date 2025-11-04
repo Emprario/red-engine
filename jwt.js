@@ -10,13 +10,14 @@ const saltRounds = parseInt(process.env.SALT_ROUNDS)
 
 export function generateToken(id) {
   const payload = { id };
-  const options = { expiresIn: '1h' }; // Token expiration time
+  const options = { expiresIn: '6h' }; // Token expiration time
   return jwt.sign(payload, secretKey, options);
 }
 
 export function verifyToken(token) {
   try {
     const decoded = jwt.verify(token, secretKey);
+    //console.log("decoded", decoded);
     return decoded.id;
   } catch (err) {
     throw "Unauthorized user"; // Token is invalid or expired

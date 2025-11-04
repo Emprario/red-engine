@@ -1,7 +1,6 @@
 import express from "express";
 import db from "../database.js";
 import dc from "../debugcon.js"
-import {validateUser} from "../jwt.js";
 
 const router = express.Router();
 
@@ -12,21 +11,88 @@ router.use((req, res, next) => {
 router.get('/', async (req, res) => {
   const params = {
     "gs": {
-      "ask": 1,
-      "close": 1
+      "ask": '1',
+      "close": '1'
     },
     "u": {
-      "ask": 1,
-      "close": 1
+      "ask": '1',
+      "close": '1'
     },
     "q": {
-      "ask": 1,
-      "close": 1
+      "ask": 'title',
+      "close": "%"
     }
   }
-  if (req.query.gs) {
-    params.gs.ask= "..."
-    params.gs.close = req.query.gs
+  dc.postCon(req.query)
 
+  if (req.query.gs) {
+    params.gs.ask = '1'
+    params.gs.close = '1'
+  }
+
+  if (req.query.u) {
+    params.u.ask = "username"
+    params.u.close = req.query.u
+  }
+
+  if (req.query.q) {
+    params.q.ask = "title"
+    params.q.close = req.query.u + "%"
+  }
+
+  dc.postCon(params)
+  try {
+    const [r] = await db.queryPostInfos(params)
+    res.status(200).json(r)
+  } catch (err){
+    dc.postCon(err)
+    res.sendStatus(400)
   }
 })
+
+router.post('/', async (req, res) => {
+  if (!req.body.qsetArray) {
+    res.sendStatus(400)
+  }
+
+  // 1. Create Post
+  req.body["id_login"] = req.body["secure_id"]
+  //dc.postCon(req.body)
+  var post;
+  try {
+    [post] = await db.createPost(req.body)
+  } catch (err){
+    dc.postCon(err)
+    res.sendStatus(400)
+  }
+  //dc.postCon(post)
+
+  // 2. Create QSets
+  for (const qset of req.body.qsetArray) {
+    qset.id_post = post.insertId
+    var set;
+    try {
+      [set] = await db.createQset(qset)
+      // 3. Create Questions
+      for (let i = 0; i < qset.questionArray.length; i++) {
+        try {
+          qset.questionArray[i].id_set =  set.insertId;
+          qset.questionArray[i].id_question = i+1;
+          await db.createQuestion(qset.questionArray[i])
+        } catch (err) {
+          dc.postCon(err)
+          res.sendStatus(400)
+          // TODO: clean db before
+        }
+      }
+    } catch (err){
+      dc.postCon(err)
+      res.sendStatus(400)
+      // TODO: clean db before
+    }
+  }
+
+  res.sendStatus(201)
+})
+
+export default router;

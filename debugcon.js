@@ -3,8 +3,8 @@ import db from "./database.js";
 import {validateUser} from "./jwt.js";
 
 // Wrapper function
-function log(con, req, res, next) {
-  con('Request:', req.method, req.path, req.query);
+function log(con, req, res, next, base) {
+  con('Request:', req.method, base + req.path, req.query);
 
   const originalSend = res.send;
   const originalJson = res.json;

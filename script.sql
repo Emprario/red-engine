@@ -95,32 +95,22 @@ CREATE TABLE QSet
 (
     id_set        INT AUTO_INCREMENT,
     prompt        VARCHAR(50) NOT NULL,
-    question_type INT(1)      NOT NULL,
-    answer        VARCHAR(50),
-    PRIMARY KEY (id_set)
+    ressource_link VARCHAR(50),
+    ressource_type VARCHAR(50),
+    id_post INT NOT NULL,
+    PRIMARY KEY (id_set),
+    FOREIGN KEY(id_post) REFERENCES Post(id_post) ON DELETE CASCADE
 );
 
 CREATE TABLE Question
 (
     id_set         INT,
     id_question    INT,
+    is_correct     INT NOT NULL,
     statement      VARCHAR(50) NOT NULL,
-    ressource_link VARCHAR(50),
-    ressource_type VARCHAR(50),
     PRIMARY KEY (id_set, id_question),
     FOREIGN KEY (id_set) REFERENCES QSet (id_set) ON DELETE CASCADE
 );
-
-CREATE TABLE Contain
-(
-    id_post INT,
-    id_set  INT,
-    PRIMARY KEY (id_post, id_set),
-    FOREIGN KEY (id_post) REFERENCES Post (id_post) ON DELETE CASCADE,
-    FOREIGN KEY (id_set) REFERENCES QSet (id_set)
-);
-
-
 
 INSERT INTO Role (id_role, quick)
 VALUES (1, 'adminsys'),
@@ -128,6 +118,6 @@ VALUES (1, 'adminsys'),
        (3, 'moderator'),
        (4, 'user');
 
-INSERT INTO Login (id_login, mail, password, username)
-VALUES (1, 'root@example.com', 'root', 'root'),
-       (2, 'for@example.com', 'meta', 'meta')
+#INSERT INTO Login (id_login, mail, password, username)
+#VALUES (1, 'root@example.com', 'root', 'root'),
+#       (2, 'for@example.com', 'meta', 'meta')

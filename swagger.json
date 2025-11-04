@@ -30,7 +30,7 @@
   ],
   "components": {
     "securitySchemes": {
-      "barerAuth": {
+      "bearerAuth": {
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT"
@@ -79,9 +79,6 @@
           },
           "publisher": {
             "$ref": "#/components/schemas/username"
-          },
-          "qsetArray": {
-            "$ref": "#/components/schemas/qsetArray"
           }
         }
       },
@@ -95,7 +92,7 @@
             "$ref": "#/components/schemas/content"
           },
           "qsetArray": {
-            "$ref": "#/components/schemas/qsetArray"
+            "$ref": "#/components/schemas/postQsetArray"
           }
         }
       },
@@ -124,34 +121,16 @@
           }
         }
       },
-      "qsetArray": {
+      "getQsetArray": {
         "type": "array",
         "items": {
-          "oneOf": [
-            {
-              "$ref": "#/components/schemas/qset"
-            },
-            {
-              "$ref": "#/components/schemas/qsetNoID"
-            }
-          ]
+          "$ref": "#/components/schemas/qset"
         }
       },
-      "qsetNoID": {
-        "type": "object",
-        "properties": {
-          "prompt": {
-            "$ref": "#/components/schemas/prompt"
-          },
-          "ressource_type": {
-            "$ref": "#/components/schemas/ressource_type"
-          },
-          "ressource_link": {
-            "$ref": "#/components/schemas/ressource_link"
-          },
-          "questionArray": {
-            "$ref": "#/components/schemas/questionArray"
-          }
+      "postQsetArray": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/qsetNoID"
         }
       },
       "qset": {
@@ -174,17 +153,33 @@
           }
         }
       },
+      "qsetNoID": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "$ref": "#/components/schemas/prompt"
+          },
+          "ressource_type": {
+            "$ref": "#/components/schemas/ressource_type"
+          },
+          "ressource_link": {
+            "$ref": "#/components/schemas/ressource_link"
+          },
+          "questionArray": {
+            "$ref": "#/components/schemas/questionArrayNoID"
+          }
+        }
+      },
       "questionArray": {
         "type": "array",
         "items": {
-          "oneOf": [
-            {
-              "$ref": "#/components/schemas/question"
-            },
-            {
-              "$ref": "#/components/schemas/questionNoID"
-            }
-          ]
+          "$ref": "#/components/schemas/question"
+        }
+      },
+      "questionArrayNoID": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/questionNoID"
         }
       },
       "question": {
@@ -306,6 +301,7 @@
   "paths": {
     "/auth/login": {
       "post": {
+        "security": [],
         "description": "Login with body credentials",
         "tags": [
           "Authenfication"
@@ -346,6 +342,7 @@
     },
     "/auth/sign-in": {
       "post": {
+        "security": [],
         "description": "Sign-in to the website",
         "tags": [
           "Authenfication"
@@ -463,7 +460,7 @@
         }
       ],
       "get": {
-        "description": "Fetch a specific post and its replies",
+        "description": "Fetch a specific post, its replies and its questionss",
         "tags": [
           "Post"
         ],
@@ -477,6 +474,9 @@
                   "properties": {
                     "post": {
                       "$ref": "#/components/schemas/getPost"
+                    },
+                    "qset": {
+                      "$ref": "#/components/schemas/getQsetArray"
                     },
                     "replies": {
                       "type": "array",
@@ -725,5 +725,9 @@
       }
     }
   },
-  "security": []
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
 }

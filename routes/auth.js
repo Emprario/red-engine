@@ -10,7 +10,13 @@ router.use((req, res, next) => {
 })
 
 router.post("/login", async (req, res, next) => {
-  const [users] = await db.getLogin(req.body);
+  let users;
+  try {
+    [users] = await db.getLogin(req.body);
+  } catch (err){
+    dc.authCon(err)
+    res.sendStatus(400)
+  }
 
   if (users.length === 0) {
     return res.sendStatus(404)
@@ -19,18 +25,23 @@ router.post("/login", async (req, res, next) => {
   const user = users[0];
   //dc.authCon(user, req.body)
   const vu = await validateUser(req.body["password"], user["password"]);
-  //dc.authCon(vu)
   if (!vu) {
     return res.sendStatus(403)
   } else {
-    return res.status(200).json({token: generateToken(user.id)});
+    return res.status(200).json({token: generateToken(user.id_login)});
   }
 });
 
 router.post("/sign-in", async (req, res, next) => {
   req.body["hash"] = await hashPassword(req.body["password"]);
-  //console.log(req.body);
-  const [result] = await db.signIn(req.body);
+
+  let result
+  try {
+    [result] = await db.signIn(req.body);
+  } catch (err){
+    dc.authCon(err)
+    res.sendStatus(400)
+  }
 
   if (result.affectedRows !== 1) {
     return res.sendStatus(404)
