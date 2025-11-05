@@ -14,6 +14,8 @@ const db = await mysql.createConnection({
 
 dc.dbCon("Connected to the database");
 
+// =============== AUTH =============== //
+
 export async function getLogin({username}) {
   return db.query("SELECT * FROM `Login` WHERE `username`=?", [username])
 }
@@ -23,10 +25,13 @@ export async function signIn({username, email, hash}) {
     [email, hash, username])
 }
 
+// =============== POST =============== //
+// --------------- root --------------- //
+
 export async function queryPostInfos({gs, u, q}) {
   return db.query("SELECT id_post, title, content, publish_date, username AS publisher FROM `Post` " +
     "INNER JOIN `Login` ON `Post`.id_login = `Login`.id_login " +
-    "WHERE ?=? AND ?=? AND ? LIKE ?", [gs.ask, gs.close, u.ask, u.close, q.ask, q.close])
+    "WHERE ?=? AND ?=? AND ? LIKE ? AND LENGTH(title)>0", [gs.ask, gs.close, u.ask, u.close, q.ask, q.close])
 }
 
 export async function createPost({title, content, id_login}) {
@@ -44,4 +49,34 @@ export async function createQset({prompt, ressource_type, ressource_link, id_pos
     [prompt, ressource_type, ressource_link, id_post])
 }
 
-export default {getLogin, signIn, queryPostInfos, createPost, createQuestion, createQset};
+// -------------- postId -------------- //
+
+export async function fetchPost({id_post}) {
+  return db.query("SELECT * FROM `Post` WHERE id_post=?", [id_post])
+}
+
+export async function getQSetsFromPost({id_post}) {
+  return db.query("SELECT * FROM `QSet` WHERE id_post = ?", [id_post])
+}
+
+export async function getQuestionsFromQSet({id_set}) {
+  return db.query("SELECT * FROM `Question` WHERE id_set = ?", [id_set])
+}
+
+export async function fetchReplies({id_post}) {
+  return db.query("SELECT Reply.id_post_reply FROM `Reply` WHERE id_post = ?", [id_post])
+}
+
+export async function createReply({content, id_login}) {
+  return db.query("INSERT INTO `Post` (content, publish_date, id_login) VALUES (?, CURRENT_TIMESTAMP, ?)", [content, id_login])
+}
+
+export async function linkReply({id_post, id_post_reply}) {
+  return db.query("INSERT INTO `Reply` (id_post, id_post_reply) VALUES (?, ?)", [id_post, id_post_reply])
+}
+
+export default {
+  getLogin, signIn,
+  queryPostInfos, createPost, createQuestion, createQset,
+  fetchPost, getQSetsFromPost, getQuestionsFromQSet, fetchReplies
+};

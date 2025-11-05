@@ -62,6 +62,23 @@
           }
         }
       },
+      "fetchPost": {
+        "type": "object",
+        "properties": {
+          "post": {
+            "$ref": "#/components/schemas/getPost"
+          },
+          "qset": {
+            "$ref": "#/components/schemas/getQsetArray"
+          },
+          "replies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/fetchPost"
+            }
+          }
+        }
+      },
       "getPost": {
         "type": "object",
         "properties": {
@@ -110,6 +127,12 @@
           },
           "publisher": {
             "$ref": "#/components/schemas/username"
+          },
+          "replies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/getReply"
+            }
           }
         }
       },
@@ -136,8 +159,8 @@
       "qset": {
         "type": "object",
         "properties": {
-          "id_qset": {
-            "$ref": "#/components/schemas/id_qset"
+          "id_set": {
+            "$ref": "#/components/schemas/id_set"
           },
           "prompt": {
             "$ref": "#/components/schemas/prompt"
@@ -185,6 +208,9 @@
       "question": {
         "type": "object",
         "properties": {
+          "id_set": {
+            "$ref": "#/components/schemas/id_set"
+          },
           "id_question": {
             "$ref": "#/components/schemas/id_question"
           },
@@ -263,7 +289,7 @@
         "type": "string",
         "example": "A example of an affirmation."
       },
-      "id_qset": {
+      "id_set": {
         "type": "integer",
         "example": 1
       },
@@ -470,21 +496,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "post": {
-                      "$ref": "#/components/schemas/getPost"
-                    },
-                    "qset": {
-                      "$ref": "#/components/schemas/getQsetArray"
-                    },
-                    "replies": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/getReply"
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/fetchPost"
                 }
               }
             }

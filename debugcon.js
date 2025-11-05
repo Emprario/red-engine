@@ -4,6 +4,9 @@ import {validateUser} from "./jwt.js";
 
 // Wrapper function
 function log(con, req, res, next, base) {
+  if (base === undefined || base == null) {
+    base = ""
+  }
   con('Request:', req.method, base + req.path, req.query);
 
   const originalSend = res.send;
@@ -17,9 +20,10 @@ function log(con, req, res, next, base) {
 
   // Override res.json to capture the body
   res.json = (body) => {
-    con('Response: [' + res.statusCode + '] ');
+    res.send = originalSend;
+    con('Response: (JSON) [' + res.statusCode + '] ');
     con(body)
-    originalSend.call(res, JSON.stringify(body));
+    originalJson.call(res, body);
   };
 
   next();

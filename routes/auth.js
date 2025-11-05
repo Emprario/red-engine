@@ -15,7 +15,7 @@ router.post("/login", async (req, res, next) => {
     [users] = await db.getLogin(req.body);
   } catch (err){
     dc.authCon(err)
-    res.sendStatus(400)
+    return res.sendStatus(400)
   }
 
   if (users.length === 0) {
@@ -40,14 +40,10 @@ router.post("/sign-in", async (req, res, next) => {
     [result] = await db.signIn(req.body);
   } catch (err){
     dc.authCon(err)
-    res.sendStatus(400)
+    return res.sendStatus(400)
   }
 
-  if (result.affectedRows !== 1) {
-    return res.sendStatus(404)
-  } else {
-    return res.sendStatus(200)
-  }
+  return res.sendStatus(200)
 });
 
 
