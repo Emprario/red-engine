@@ -75,8 +75,6 @@ export async function linkReply({id_post, id_post_reply}) {
   return db.query("INSERT INTO `Reply` (id_post, id_post_reply) VALUES (?, ?)", [id_post, id_post_reply])
 }
 
-export default {
-  getLogin, signIn,
-  queryPostInfos, createPost, createQuestion, createQset,
-  fetchPost, getQSetsFromPost, getQuestionsFromQSet, fetchReplies
-};
+export async function deletePost({id_post, id_login}) {
+  return db.query("DELETE FROM `Post` WHERE id_post=? AND id_login=?", [id_post, id_login])
+}

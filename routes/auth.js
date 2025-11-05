@@ -1,5 +1,5 @@
 import express from "express";
-import db from "../database.js";
+import {getLogin, signIn} from "../database.js";
 import dc from "../debugcon.js"
 import {generateToken, validateUser, hashPassword} from "../jwt.js";
 
@@ -12,7 +12,7 @@ router.use((req, res, next) => {
 router.post("/login", async (req, res, next) => {
   let users;
   try {
-    [users] = await db.getLogin(req.body);
+    [users] = await getLogin(req.body);
   } catch (err){
     dc.authCon(err)
     return res.sendStatus(400)
@@ -37,7 +37,7 @@ router.post("/sign-in", async (req, res, next) => {
 
   let result
   try {
-    [result] = await db.signIn(req.body);
+    [result] = await signIn(req.body);
   } catch (err){
     dc.authCon(err)
     return res.sendStatus(400)

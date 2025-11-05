@@ -1,5 +1,13 @@
 import express from "express";
-import db, {createReply, fetchReplies, getQSetsFromPost, linkReply} from "../database.js";
+import {
+  createPost, createQset, createQuestion,
+  createReply,
+  deletePost, fetchPost,
+  fetchReplies,
+  getQSetsFromPost, getQuestionsFromQSet,
+  linkReply,
+  queryPostInfos
+} from "../database.js";
 import dc from "../debugcon.js"
 
 const router = express.Router();
@@ -42,7 +50,7 @@ router.get('/', async (req, res) => {
 
   dc.postCon(params)
   try {
-    const [r] = await db.queryPostInfos(params)
+    const [r] = await queryPostInfos(params)
     return res.status(200).json(r)
   } catch (err) {
     dc.postCon(err)
@@ -60,7 +68,7 @@ router.post('/', async (req, res) => {
   //dc.postCon(req.body)
   var post;
   try {
-    [post] = await db.createPost(req.body)
+    [post] = await createPost(req.body)
   } catch (err) {
     dc.postCon(err)
     return res.sendStatus(400)
@@ -72,13 +80,13 @@ router.post('/', async (req, res) => {
     qset.id_post = post.insertId
     var set;
     try {
-      [set] = await db.createQset(qset)
+      [set] = await createQset(qset)
       // 3. Create Questions
       for (let i = 0; i < qset.questionArray.length; i++) {
         try {
           qset.questionArray[i].id_set = set.insertId;
           qset.questionArray[i].id_question = i + 1;
-          await db.createQuestion(qset.questionArray[i])
+          await createQuestion(qset.questionArray[i])
         } catch (err) {
           dc.postCon(err)
           return res.sendStatus(400)
@@ -100,23 +108,23 @@ router.get("/:postId", async (req, res) => {
 
 
   async function rootfetch({parentJson, id_post}) {
-    [parentJson["post"]]= await db.fetchPost({id_post})
+    [parentJson["post"]]= await fetchPost({id_post})
 
     if (parentJson["post"] === undefined) {
       throw new Error("No parent post")
     }
 
 
-    [parentJson["qset"]] = await db.getQSetsFromPost({id_post})
+    [parentJson["qset"]] = await getQSetsFromPost({id_post})
 
     for (let i = 0; i < parentJson["qset"].length; i++) {
-      [parentJson["qset"][i]["questionArray"]] = await db.getQuestionsFromQSet(result["qset"][i])
+      [parentJson["qset"][i]["questionArray"]] = await getQuestionsFromQSet(result["qset"][i])
       //dc.postCon(result["qset"][i]["questionArray"])
     }
 
     parentJson["replies"] = []
     let all_repl_id
-    [all_repl_id] = await db.fetchReplies({id_post})
+    [all_repl_id] = await fetchReplies({id_post})
     //dc.postCon("replies", all_repl_id)
     for (const id of all_repl_id) {
       let obj = {}
@@ -161,6 +169,36 @@ router.post("/:postId", async (req, res) => {
   }
 
   res.sendStatus(201)
+})
+
+router.delete("/:postId", async (req, res) => {
+  dc.postCon("postId: " + req.params.postId)
+
+  req.body["id_login"] = req.body["secure_id"]
+  req.body["id_post"] = req.params["postId"]
+
+
+
+  dc.postCon(req.body)
+
+  let r
+  try {
+    r = await deletePost(req.body)
+  } catch (err) {
+    dc.postCon(err)
+    return res.sendStatus(400)
+  }
+
+  if (r.affectedRows > 0) {
+    return res.sendStatus(200)
+  } else {
+    if ((await fetchPost(req.body))[0].length > 0) {
+      //dc.postCon(await fetchPost(req.body))
+      return res.sendStatus(403)
+    } else {
+      return res.sendStatus(404)
+    }
+  }
 })
 
 export default router;

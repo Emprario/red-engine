@@ -1,5 +1,4 @@
 import debug from 'debug';
-import db from "./database.js";
 import {validateUser} from "./jwt.js";
 
 // Wrapper function
