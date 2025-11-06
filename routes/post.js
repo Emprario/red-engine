@@ -70,6 +70,7 @@ router.get('/', async (req, res) => {
 
   dc.postCon(params)
   try {
+    dc.postCon(await queryPostInfos(params))
     const [r] = await queryPostInfos(params)
     return res.status(200).json(r)
   } catch (err) {

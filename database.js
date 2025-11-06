@@ -32,9 +32,11 @@ export async function signIn({username, email, hash}) {
 // --------------- root --------------- //
 
 export async function queryPostInfos({gs, u, q}) {
-  return db.query("SELECT id_post, title, content, publish_date, username AS publisher FROM `Post` " +
+  return db.query("SELECT `Post`.id_post, title, content, publish_date, username AS publisher, COUNT(*) AS plays FROM `Post` " +
     "INNER JOIN `Login` ON `Post`.id_login = `Login`.id_login " +
-    "WHERE ?=? AND ?=? AND ? LIKE ? AND LENGTH(title)>0", [gs.ask, gs.close, u.ask, u.close, q.ask, q.close])
+    "INNER JOIN `Play` ON `Post`.id_post = `Play`.id_post " +
+    "WHERE ?=? AND ?=? AND username LIKE ? AND LENGTH(title)>0 " +
+    "GROUP BY `Post`.id_post ", [gs.ask, gs.close, u.ask, u.close, q.close])
 }
 
 export async function createPost({title, content, id_login}) {

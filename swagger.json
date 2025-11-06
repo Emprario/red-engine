@@ -96,6 +96,12 @@
           },
           "publisher": {
             "$ref": "#/components/schemas/username"
+          },
+          "plays": {
+            "$ref": "#/components/schemas/amount"
+          },
+          "signals": {
+            "$ref": "#/components/schemas/amount"
           }
         }
       },
@@ -232,11 +238,6 @@
             "$ref": "#/components/schemas/statement"
           }
         }
-      },
-      "u": {
-        "type": "integer",
-        "example": "1",
-        "description": "u takes only id no username"
       },
       "q": {
         "type": "string",
@@ -426,9 +427,9 @@
           {
             "in": "query",
             "name": "u",
-            "description": "The user parameter is to select post for only one user (id).",
+            "description": "The user parameter is to select post for only one username.",
             "schema": {
-              "$ref": "#/components/schemas/u"
+              "$ref": "#/components/schemas/username"
             }
           }
         ],
