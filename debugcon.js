@@ -33,5 +33,7 @@ export default {
   svCon: debug('red-engine:server'),
   dbCon: debug("red-engine:database"),
   authCon: debug("red-engine:route/auth"),
-  postCon: debug("red-engine:route/post")
+  postCon: debug("red-engine:route/post"),
+  playCon: debug("red-engine:route/post:play"),
+  signalCon: debug("red-engine:route/post:signal")
 }

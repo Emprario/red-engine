@@ -313,6 +313,14 @@
       "amount": {
         "type": "integer",
         "example": 169
+      },
+      "played": {
+        "type": "boolean",
+        "example": true
+      },
+      "signaled": {
+        "type": "boolean",
+        "example": true
       }
     },
     "responses": {
@@ -611,7 +619,7 @@
         }
       ],
       "get": {
-        "description": "Get amount of plays (likes) of a specific post",
+        "description": "Get amount of plays (likes) of a specific post and if I played",
         "tags": [
           "Post"
         ],
@@ -625,6 +633,9 @@
                   "properties": {
                     "amount": {
                       "$ref": "#/components/schemas/amount"
+                    },
+                    "played": {
+                      "$ref": "#/components/schemas/played"
                     }
                   }
                 }
@@ -704,6 +715,9 @@
                   "properties": {
                     "amount": {
                       "$ref": "#/components/schemas/amount"
+                    },
+                    "signaled": {
+                      "$ref": "#/components/schemas/signaled"
                     }
                   }
                 }

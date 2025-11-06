@@ -9,12 +9,32 @@ import {
   queryPostInfos
 } from "../database.js";
 import dc from "../debugcon.js"
+import playRouter from "./post/play.js"
+import signalRouter from "./post/signal.js"
 
 const router = express.Router();
+
+router.use('/:postId/play', (req, res, next) => {
+  req.body.id_post = req.params.postId
+  req.body.id_login = req.body.secure_id
+  playRouter(req, res, next)
+})
+
+router.use('/:postId/signal', (req, res, next) => {
+  req.body.id_post = req.params.postId
+  req.body.id_login = req.body.secure_id
+  signalRouter(req, res, next)
+})
 
 router.use((req, res, next) => {
   dc.log(dc.postCon, req, res, next);
 })
+
+router.use('/:postId', (req, res, next) => {
+  dc.postCon("postId: " + req.params.postId)
+  next()
+})
+
 
 router.get('/', async (req, res) => {
   const params = {
@@ -104,16 +124,13 @@ router.post('/', async (req, res) => {
 })
 
 router.get("/:postId", async (req, res) => {
-  dc.postCon("postId: " + req.params.postId)
-
 
   async function rootfetch({parentJson, id_post}) {
     [parentJson["post"]]= await fetchPost({id_post})
 
-    if (parentJson["post"] === undefined) {
+    if (parentJson["post"].length === 0) {
       throw new Error("No parent post")
     }
-
 
     [parentJson["qset"]] = await getQSetsFromPost({id_post})
 
@@ -147,7 +164,6 @@ router.get("/:postId", async (req, res) => {
 })
 
 router.post("/:postId", async (req, res) => {
-  dc.postCon("postId: " + req.params.postId)
 
   req.body["id_login"] = req.body["secure_id"]
 
@@ -172,8 +188,6 @@ router.post("/:postId", async (req, res) => {
 })
 
 router.delete("/:postId", async (req, res) => {
-  dc.postCon("postId: " + req.params.postId)
-
   req.body["id_login"] = req.body["secure_id"]
   req.body["id_post"] = req.params["postId"]
 
@@ -200,5 +214,6 @@ router.delete("/:postId", async (req, res) => {
     }
   }
 })
+
 
 export default router;
