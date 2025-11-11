@@ -164,7 +164,7 @@ router.get("/:postId", async (req, res) => {
 
 })
 
-router.post("/:postId", async (req, res) => {
+router.post("/:postId/reply", async (req, res) => {
 
   req.body["id_login"] = req.body["secure_id"]
 

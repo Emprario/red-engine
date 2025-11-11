@@ -66,7 +66,7 @@ export async function getQSetsFromPost({id_post}) {
 }
 
 export async function getQuestionsFromQSet({id_set}) {
-  return db.query("SELECT * FROM `Question` WHERE id_set = ?", [id_set])
+  return db.query("SELECT id_set, id_question, statement FROM `Question` WHERE id_set = ?", [id_set])
 }
 
 export async function fetchReplies({id_post}) {

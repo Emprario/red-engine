@@ -83,7 +83,7 @@
         "type": "object",
         "properties": {
           "id_post": {
-            "$ref": "#/components/schemas/id_post"
+            "$ref": "#/components/schemas/id"
           },
           "title": {
             "$ref": "#/components/schemas/title"
@@ -123,7 +123,7 @@
         "type": "object",
         "properties": {
           "id_post": {
-            "$ref": "#/components/schemas/id_post"
+            "$ref": "#/components/schemas/id"
           },
           "content": {
             "$ref": "#/components/schemas/content"
@@ -153,7 +153,7 @@
       "getQsetArray": {
         "type": "array",
         "items": {
-          "$ref": "#/components/schemas/qset"
+          "$ref": "#/components/schemas/qsetNoAns"
         }
       },
       "postQsetArray": {
@@ -162,11 +162,65 @@
           "$ref": "#/components/schemas/qsetNoID"
         }
       },
-      "qset": {
+      "user": {
+        "type": "object",
+        "properties": {
+          "id_login": {
+            "$ref": "#/components/schemas/id"
+          },
+          "username": {
+            "$ref": "#/components/schemas/username"
+          },
+          "mail": {
+            "$ref": "#/components/schemas/mail"
+          },
+          "roles": {
+            "$ref": "#/components/schemas/roles"
+          }
+        }
+      },
+      "vgd": {
+        "type": "object",
+        "properties": {
+          "id_vg": {
+            "$ref": "#/components/schemas/id"
+          },
+          "name": {
+            "$ref": "#/components/schemas/name"
+          },
+          "image_link": {
+            "$ref": "#/components/schemas/link"
+          },
+          "release_date": {
+            "$ref": "#/components/schemas/release_date"
+          },
+          "description": {
+            "$ref": "#/components/schemas/description"
+          }
+        }
+      },
+      "vgdNoID": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/name"
+          },
+          "image_link": {
+            "$ref": "#/components/schemas/link"
+          },
+          "release_date": {
+            "$ref": "#/components/schemas/release_date"
+          },
+          "description": {
+            "$ref": "#/components/schemas/description"
+          }
+        }
+      },
+      "qsetNoAns": {
         "type": "object",
         "properties": {
           "id_set": {
-            "$ref": "#/components/schemas/id_set"
+            "$ref": "#/components/schemas/id"
           },
           "prompt": {
             "$ref": "#/components/schemas/prompt"
@@ -175,10 +229,10 @@
             "$ref": "#/components/schemas/ressource_type"
           },
           "ressource_link": {
-            "$ref": "#/components/schemas/ressource_link"
+            "$ref": "#/components/schemas/link"
           },
           "questionArray": {
-            "$ref": "#/components/schemas/questionArray"
+            "$ref": "#/components/schemas/questionArrayNoAns"
           }
         }
       },
@@ -192,17 +246,57 @@
             "$ref": "#/components/schemas/ressource_type"
           },
           "ressource_link": {
-            "$ref": "#/components/schemas/ressource_link"
+            "$ref": "#/components/schemas/link"
           },
           "questionArray": {
             "$ref": "#/components/schemas/questionArrayNoID"
           }
         }
       },
-      "questionArray": {
+      "answerRepSubArr": {
         "type": "array",
         "items": {
-          "$ref": "#/components/schemas/question"
+          "$ref": "#/components/schemas/answerRepSub"
+        }
+      },
+      "answerRepSub": {
+        "type": "object",
+        "properties": {
+          "id_set": {
+            "$ref": "#/components/schemas/id"
+          },
+          "id_question": {
+            "$ref": "#/components/schemas/id"
+          },
+          "right": {
+            "$ref": "#/components/schemas/is_correct"
+          }
+        }
+      },
+      "answerSubArr": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/answerSub"
+        }
+      },
+      "answerSub": {
+        "type": "object",
+        "properties": {
+          "id_set": {
+            "$ref": "#/components/schemas/id"
+          },
+          "id_question": {
+            "$ref": "#/components/schemas/id"
+          },
+          "is_correct": {
+            "$ref": "#/components/schemas/is_correct"
+          }
+        }
+      },
+      "questionArrayNoAns": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/questionNoAns"
         }
       },
       "questionArrayNoID": {
@@ -211,17 +305,14 @@
           "$ref": "#/components/schemas/questionNoID"
         }
       },
-      "question": {
+      "questionNoAns": {
         "type": "object",
         "properties": {
           "id_set": {
-            "$ref": "#/components/schemas/id_set"
+            "$ref": "#/components/schemas/id"
           },
           "id_question": {
-            "$ref": "#/components/schemas/id_question"
-          },
-          "is_correct": {
-            "$ref": "#/components/schemas/is_correct"
+            "$ref": "#/components/schemas/id"
           },
           "statement": {
             "$ref": "#/components/schemas/statement"
@@ -266,7 +357,7 @@
         "type": "string",
         "example": "jwt token like (TODO)"
       },
-      "id_post": {
+      "id": {
         "type": "integer",
         "example": 1
       },
@@ -278,10 +369,6 @@
         "type": "string",
         "example": "My name is Nico."
       },
-      "id_question": {
-        "type": "integer",
-        "example": 1
-      },
       "is_correct": {
         "type": "boolean",
         "example": true
@@ -289,10 +376,6 @@
       "statement": {
         "type": "string",
         "example": "A example of an affirmation."
-      },
-      "id_set": {
-        "type": "integer",
-        "example": 1
       },
       "prompt": {
         "type": "string",
@@ -302,7 +385,7 @@
         "type": "string",
         "example": "image"
       },
-      "ressource_link": {
+      "link": {
         "type": "string",
         "example": "https://cdn.example.com/image.jpg"
       },
@@ -322,6 +405,40 @@
       "signaled": {
         "type": "boolean",
         "example": true
+      },
+      "name": {
+        "type": "string",
+        "example": "Zelda"
+      },
+      "release_date": {
+        "type": "string",
+        "format": "date",
+        "example": "2017-07-21"
+      },
+      "description": {
+        "type": "string",
+        "example": "A amazing description of a videogame"
+      },
+      "assignRole": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "$ref": "#/components/schemas/username"
+          },
+          "role": {
+            "$ref": "#/components/schemas/role"
+          }
+        }
+      },
+      "role": {
+        "type": "string",
+        "example": "adminsys"
+      },
+      "roles": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/role"
+        }
       }
     },
     "responses": {
@@ -488,7 +605,7 @@
           "in": "path",
           "name": "postId",
           "schema": {
-            "$ref": "#/components/schemas/id_post"
+            "$ref": "#/components/schemas/id"
           },
           "required": true,
           "description": "The post Id to manage"
@@ -509,35 +626,6 @@
                 }
               }
             }
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          },
-          "404": {
-            "description": "Post not found"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Post"
-        ],
-        "description": "Reply to a specific post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/newReply"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "New reply created !"
-          },
-          "400": {
-            "description": "Bad information provided"
           },
           "401": {
             "$ref": "#/components/responses/401"
@@ -607,13 +695,104 @@
         }
       }
     },
+    "/post/{postId}/reply": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "postId",
+          "schema": {
+            "$ref": "#/components/schemas/id"
+          },
+          "required": true,
+          "description": "The post Id to manage"
+        }
+      ],
+      "post": {
+        "tags": [
+          "Post"
+        ],
+        "description": "Reply to a specific post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/newReply"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "New reply created !"
+          },
+          "400": {
+            "description": "Bad information provided"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "description": "Post not found"
+          }
+        }
+      }
+    },
+    "/post/{postId}/submit": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "postId",
+          "schema": {
+            "$ref": "#/components/schemas/id"
+          },
+          "required": true,
+          "description": "The post Id to manage"
+        }
+      ],
+      "post": {
+        "tags": [
+          "Post"
+        ],
+        "description": "Reply to a specific post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/answerSubArr"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Submission sucessfull ! Please find attached your results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/answerRepSubArr"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad length"
+          },
+          "404": {
+            "description": "Post not found"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      }
+    },
     "/post/{postId}/play": {
       "parameters": [
         {
           "in": "path",
           "name": "postId",
           "schema": {
-            "$ref": "#/components/schemas/id_post"
+            "$ref": "#/components/schemas/id"
           },
           "required": true,
           "description": "The post Id to manage"
@@ -695,7 +874,7 @@
           "in": "path",
           "name": "postId",
           "schema": {
-            "$ref": "#/components/schemas/id_post"
+            "$ref": "#/components/schemas/id"
           },
           "required": true,
           "description": "The post Id to manage"
@@ -747,6 +926,170 @@
           },
           "404": {
             "description": "Post not found"
+          }
+        }
+      }
+    },
+    "/vgd": {
+      "get": {
+        "description": "Get all video games available",
+        "tags": [
+          "VideoGame Discovery"
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetch all videogames",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/vgd"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      },
+      "post": {
+        "description": "Post a new video game",
+        "tags": [
+          "VideoGame Discovery"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/vgdNoID"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Modify a video game"
+          },
+          "400": {
+            "description": "Bad informations provided"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          }
+        }
+      },
+      "put": {
+        "description": "Modify a video game",
+        "tags": [
+          "VideoGame Discovery"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/vgd"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Create a new video game"
+          },
+          "400": {
+            "description": "Bad informations provided"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          }
+        }
+      }
+    },
+    "/user/me": {
+      "get": {
+        "description": "Get information about current login user",
+        "tags": [
+          "User"
+        ],
+        "responses": {
+          "200": {
+            "description": "Details about me",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/user"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/user/assign": {
+      "post": {
+        "description": "Assign a role to a user",
+        "tags": [
+          "User"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/assignRole"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Assign a new role to the user."
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Cannot found user or role"
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete a role from a user",
+        "tags": [
+          "User"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/assignRole"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Delete a role to the user."
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Cannot found user or role"
           }
         }
       }
