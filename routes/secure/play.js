@@ -5,11 +5,12 @@ import dc from "../../debugcon.js"
 const router = express.Router();
 
 router.use((req, res, next) => {
-  dc.log(dc.playCon, req, res, next);
+  dc.log(dc.playCon, req, res, next, '(secure)');
 })
 
 router.use((req, res, next) => {
   dc.playCon("postId: " + req.body.id_post)
+  req.body.id_login = req.body.secure_id
   next();
 })
 

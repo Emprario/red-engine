@@ -3,31 +3,17 @@ import {
   createPost, createQset, createQuestion,
   createReply,
   deletePost, fetchPost,
-  fetchReplies,
+  fetchReplies, fetchSubmitionAnswers,
   getQSetsFromPost, getQuestionsFromQSet,
   linkReply,
   queryPostInfos
-} from "../database.js";
-import dc from "../debugcon.js"
-import playRouter from "./post/play.js"
-import signalRouter from "./post/signal.js"
+} from "../../database.js";
+import dc from "../../debugcon.js"
 
 const router = express.Router();
 
-router.use('/:postId/play', (req, res, next) => {
-  req.body.id_post = req.params.postId
-  req.body.id_login = req.body.secure_id
-  playRouter(req, res, next)
-})
-
-router.use('/:postId/signal', (req, res, next) => {
-  req.body.id_post = req.params.postId
-  req.body.id_login = req.body.secure_id
-  signalRouter(req, res, next)
-})
-
 router.use((req, res, next) => {
-  dc.log(dc.postCon, req, res, next);
+  dc.log(dc.postCon, req, res, next, '(secure)');
 })
 
 router.use('/:postId', (req, res, next) => {
@@ -127,7 +113,7 @@ router.post('/', async (req, res) => {
 router.get("/:postId", async (req, res) => {
 
   async function rootfetch({parentJson, id_post}) {
-    [parentJson["post"]]= await fetchPost({id_post})
+    [parentJson["post"]] = await fetchPost({id_post})
 
     if (parentJson["post"].length === 0) {
       throw new Error("No parent post")
@@ -188,10 +174,43 @@ router.post("/:postId/reply", async (req, res) => {
   res.sendStatus(201)
 })
 
+router.post("/:postId/submit", async (req, res) => {
+
+  req.body["id_post"] = req.params.postId
+  let r
+  try {
+    [r] = await fetchSubmitionAnswers(req.body)
+  } catch (err) {
+    dc.postCon(err)
+    return res.sendStatus(400)
+  }
+
+  if (r.length === 0) {
+    res.sendStatus(404)
+  }
+
+  // Sort our array
+  req.body.sort(
+    (a, b) => ((a.id_set === b.id_set) && (a.id_question > b.id_question)) || (a.id_set > b.id_set)
+  )
+
+  const mt = []
+
+  for (let i = 0; i < req.body.length; i++) {
+    if (!(req.body[i].id_set === r[i].id_set && req.body[i].id_question === r[i].id_question)) {
+      return res.sendStatus(400)
+    }
+    req.body[i]["right"] = req.body[i]["is_correct"] === !!r[i]["is_correct"]
+    delete req.body[i]["is_correct"]
+    mt.push(req.body[i])
+  }
+
+  return res.status(200).send(mt)
+})
+
 router.delete("/:postId", async (req, res) => {
   req.body["id_login"] = req.body["secure_id"]
   req.body["id_post"] = req.params["postId"]
-
 
 
   dc.postCon(req.body)

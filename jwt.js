@@ -8,17 +8,15 @@ dotenv.config();
 const secretKey = process.env.SECRET
 const saltRounds = parseInt(process.env.SALT_ROUNDS)
 
-export function generateToken(id) {
-  const payload = { id };
+export function generateToken(id, roles) {
+  const payload = { id, roles};
   const options = { expiresIn: '6h' }; // Token expiration time
   return jwt.sign(payload, secretKey, options);
 }
 
 export function verifyToken(token) {
   try {
-    const decoded = jwt.verify(token, secretKey);
-    //console.log("decoded", decoded);
-    return decoded.id;
+    return jwt.verify(token, secretKey);
   } catch (err) {
     throw "Unauthorized user"; // Token is invalid or expired
   }

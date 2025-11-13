@@ -63,6 +63,7 @@ function onError(error) {
     : 'Port ' + port;
 
   // handle specific listen errors with friendly messages
+  console.log(error);
   switch (error.code) {
     case 'EACCES':
       console.error(bind + ' requires elevated privileges');

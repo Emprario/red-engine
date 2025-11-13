@@ -47,7 +47,7 @@ CREATE TABLE
     Role
 (
     id_role INT AUTO_INCREMENT,
-    quick   VARCHAR(50),
+    quick   VARCHAR(50) UNIQUE,
     PRIMARY KEY (id_role)
 );
 
@@ -114,9 +114,7 @@ CREATE TABLE Question
 
 INSERT INTO Role (id_role, quick)
 VALUES (1, 'adminsys'),
-       (2, 'vgpartner'),
-       (3, 'moderator'),
-       (4, 'user');
+       (2, 'manager');
 
 #INSERT INTO Login (id_login, mail, password, username)
 #VALUES (1, 'root@example.com', 'root', 'root'),

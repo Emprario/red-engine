@@ -1,12 +1,12 @@
 import express from "express";
-import {getLogin, signIn} from "../database.js";
+import {getLogin, signIn, getUserRoles} from "../database.js";
 import dc from "../debugcon.js"
 import {generateToken, validateUser, hashPassword} from "../jwt.js";
 
 const router = express.Router();
 
 router.use((req, res, next) => {
-  dc.log(dc.authCon, req, res, next);
+  dc.log(dc.authCon, req, res, next, '() ');
 })
 
 router.post("/login", async (req, res, next) => {
@@ -28,7 +28,9 @@ router.post("/login", async (req, res, next) => {
   if (!vu) {
     return res.sendStatus(403)
   } else {
-    return res.status(200).json({token: generateToken(user.id_login)});
+    let [r] = await getUserRoles(user);
+    r = r.map(l => l.quick)
+    return res.status(200).json({token: generateToken(user.id_login, r)});
   }
 });
 

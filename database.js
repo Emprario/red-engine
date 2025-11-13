@@ -85,6 +85,13 @@ export async function deletePost({id_post, id_login}) {
   return db.query("DELETE FROM `Post` WHERE id_post=? AND id_login=?", [id_post, id_login])
 }
 
+export async function fetchSubmitionAnswers({id_post}) {
+  return db.query("SELECT Qt.id_set, Qt.id_question, Qt.is_correct FROM Question AS Qt " +
+    "INNER JOIN QSet AS Qs ON Qs.id_set = Qt.id_set " +
+    "WHERE id_post=? " +
+    "ORDER BY Qt.id_set, Qt.id_question", [id_post])
+}
+
 
 // --------------- play --------------- //
 
@@ -117,4 +124,26 @@ export async function getSignaled({id_post, id_login}) {
 
 export async function getAmountSignal({id_post}) {
   return db.query("SELECT COUNT(*) AS 'AMOUNT' FROM `Signal` WHERE id_post=?", [id_post])
+}
+
+// =============== USER =============== //
+
+export async function getUserInfo({id_login}) {
+  return db.query("SELECT id_login, mail, username FROM Login WHERE id_login=?", [id_login])
+}
+
+export async function getUserRoles({id_login}) {
+  return db.query("SELECT DISTINCT quick FROM `Role` INNER JOIN HAS_A USING(id_role) WHERE id_login=?", [id_login])
+}
+
+export async function getRoleId({quick}) {
+  return db.query("SELECT id_role FROM `Role` WHERE quick=?", quick)
+}
+
+export async function assignRole({id_role, id_login}) {
+  return db.query("INSERT INTO `HAS_A` (id_role, id_login) VALUES (?, ?)", [id_role, id_login])
+}
+
+export async function deleteRole({id_role, id_login}) {
+  return db.query("DELETE FROM `HAS_A` WHERE id_role=? AND id_login=?", [id_role, id_login])
 }
