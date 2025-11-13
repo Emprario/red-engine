@@ -1,5 +1,5 @@
 import express from "express";
-import {getLogin, signIn, getUserRoles} from "../database.js";
+import {getLogin, signIn} from "../database.js";
 import dc from "../debugcon.js"
 import {generateToken, validateUser, hashPassword} from "../jwt.js";
 
@@ -28,9 +28,7 @@ router.post("/login", async (req, res, next) => {
   if (!vu) {
     return res.sendStatus(403)
   } else {
-    let [r] = await getUserRoles(user);
-    r = r.map(l => l.quick)
-    return res.status(200).json({token: generateToken(user.id_login, r)});
+    return res.status(200).json({token: generateToken(user.id_login)});
   }
 });
 

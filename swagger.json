@@ -973,7 +973,7 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "Modify a video game"
           },
           "400": {
@@ -986,6 +986,66 @@
             "$ref": "#/components/responses/403"
           }
         }
+      }
+    },
+    "/vgd/{vgdId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "vgdId",
+          "schema": {
+            "$ref": "#/components/schemas/id"
+          },
+          "required": true,
+          "description": "The vgd Id to manage"
+        }
+      ],
+      "get": {
+        "description": "Get a video game",
+        "tags": [
+          "VideoGame Discovery"
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetch all videogames",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/vgd"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "description": "Vgd not found"
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete a video game",
+        "tags": [
+          "VideoGame Discovery"
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete a video game"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "403": {
+            "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "description": "Vgd not found"
+          }
+        }
       },
       "put": {
         "description": "Modify a video game",
@@ -996,14 +1056,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/vgd"
+                "$ref": "#/components/schemas/vgdNoID"
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Create a new video game"
+          "200": {
+            "description": "Modify a video game"
           },
           "400": {
             "description": "Bad informations provided"
@@ -1013,6 +1073,9 @@
           },
           "403": {
             "$ref": "#/components/responses/403"
+          },
+          "404": {
+            "description": "Vgd not found !"
           }
         }
       }
@@ -1067,6 +1130,9 @@
           },
           "404": {
             "description": "Cannot found user or role"
+          },
+          "406": {
+            "description": "Role is already owned by the user"
           }
         }
       },

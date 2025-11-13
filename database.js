@@ -21,9 +21,9 @@ export async function getLogin({username}) {
   return db.query("SELECT * FROM `Login` WHERE `username`=?", [username])
 }
 
-export async function signIn({username, email, hash}) {
+export async function signIn({username, mail, hash}) {
   return db.query("INSERT INTO `Login` (`mail`, `password`, `username`) VALUES (?, ?, ?)",
-    [email, hash, username])
+    [mail, hash, username])
 }
 
 
@@ -132,6 +132,11 @@ export async function getUserInfo({id_login}) {
   return db.query("SELECT id_login, mail, username FROM Login WHERE id_login=?", [id_login])
 }
 
+export async function getUserInfoFromUsername({username}) {
+  // Username is also unique
+  return db.query("SELECT id_login, mail, username FROM Login WHERE username=?", [username])
+}
+
 export async function getUserRoles({id_login}) {
   return db.query("SELECT DISTINCT quick FROM `Role` INNER JOIN HAS_A USING(id_role) WHERE id_login=?", [id_login])
 }
@@ -146,4 +151,26 @@ export async function assignRole({id_role, id_login}) {
 
 export async function deleteRole({id_role, id_login}) {
   return db.query("DELETE FROM `HAS_A` WHERE id_role=? AND id_login=?", [id_role, id_login])
+}
+
+// =============== VGD  =============== //
+
+export async function fetchVgd({id_vg}) {
+  return db.query("SELECT * FROM `VGDiscover` WHERE id_vg=?", [id_vg])
+}
+
+export async function getAllVgd() {
+  return db.query("SELECT * FROM `VGDiscover`")
+}
+
+export async function createNewVgd({name, image_link, release_date, description}) {
+  return db.query("INSERT INTO `VGDiscover` (name, image_link, release_date, description) VALUES (?, ?, ?, ?)", [name, image_link, release_date, description])
+}
+
+export async function deleteVgd({id_vg}) {
+  return db.query("DELETE FROM `VGDiscover` WHERE id_vg=?", [id_vg])
+}
+
+export async function putNewVgd({id_vg, name, image_link, release_date, description}) {
+  return db.query("UPDATE `VGDiscover` SET name=?, image_link=?, release_date=?, description=? WHERE id_vg=?", [name, image_link, release_date, description, id_vg])
 }

@@ -8,8 +8,8 @@ dotenv.config();
 const secretKey = process.env.SECRET
 const saltRounds = parseInt(process.env.SALT_ROUNDS)
 
-export function generateToken(id, roles) {
-  const payload = { id, roles};
+export function generateToken(id) {
+  const payload = { id};
   const options = { expiresIn: '6h' }; // Token expiration time
   return jwt.sign(payload, secretKey, options);
 }

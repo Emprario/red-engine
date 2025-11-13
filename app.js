@@ -8,11 +8,13 @@ import secPostRouter from './routes/secure/post.js';
 import secPlayRouter from "./routes/secure/play.js"
 import secSignalRouter from "./routes/secure/signal.js"
 import secUserRouter from './routes/secure/user.js';
+import secVgdRouter from './routes/secure/vgd.js'
 import mgrPostRouter from './routes/manager/post.js';
 import mgrVgdRouter from './routes/manager/vgd.js';
 import sysUserRouter from './routes/sysadmin/user.js';
 import {verifyToken} from './jwt.js';
 import dc from "./debugcon.js";
+import {getUserRoles} from "./database.js";
 
 const app = express();
 
@@ -32,7 +34,7 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.use('/auth', authRouter);
 
 // Middleware global auth
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
   dc.svCon("Enter auth area ...")
   let token;
   try {
@@ -50,7 +52,18 @@ app.use((req, res, next) => {
     return res.sendStatus(403)
   }
 
-  for (const role of decoded.roles) {
+  let roles
+  try {
+    [roles] = await getUserRoles({id_login: decoded.id})
+  } catch (err) {
+    dc.svCon("[403] Invalid token (cannot find roles of current user - user deleted ?)");
+    return res.sendStatus(403)
+  }
+  roles = roles.map(x => x.quick)
+
+  //dc.svCon(roles)
+
+  for (const role of roles) {
     switch (role) {
       case "sysadmin":
         dc.svCon("Add sysadmin zone ...");
@@ -65,6 +78,7 @@ app.use((req, res, next) => {
   }
 
   // Protected global routes
+  app.use('/vgd', secVgdRouter);
   app.use('/post', secPostRouter);
   app.use('/post/:postId/play', (req, res, next) => {
     req.body.id_post = req.params.postId

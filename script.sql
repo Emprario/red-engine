@@ -113,7 +113,7 @@ CREATE TABLE Question
 );
 
 INSERT INTO Role (id_role, quick)
-VALUES (1, 'adminsys'),
+VALUES (1, 'sysadmin'),
        (2, 'manager');
 
 #INSERT INTO Login (id_login, mail, password, username)
