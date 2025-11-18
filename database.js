@@ -32,11 +32,20 @@ export async function signIn({username, mail, hash}) {
 // --------------- root --------------- //
 
 export async function queryPostInfos({gs, u, q}) {
-  return db.query("SELECT `Post`.id_post, title, content, publish_date, username AS publisher, COUNT(*) AS plays FROM `Post` " +
-    "INNER JOIN `Login` ON `Post`.id_login = `Login`.id_login " +
-    "INNER JOIN `Play` ON `Post`.id_post = `Play`.id_post " +
-    "WHERE ?=? AND ?=? AND username LIKE ? AND LENGTH(title)>0 " +
-    "GROUP BY `Post`.id_post ", [gs.ask, gs.close, u.ask, u.close, q.close])
+  return db.query(`
+      SELECT Post.id_post,
+             title,
+             content,
+             publish_date,
+             username AS publisher,
+             GROUP_CONCAT(DISTINCT id_vg SEPARATOR ',') AS vgd
+      FROM Post
+               LEFT JOIN Talk_about USING(id_post)
+               INNER JOIN Login ON Post.id_login = Login.id_login
+      WHERE title IS NOT NULL
+      GROUP BY Post.id_post
+      ORDER BY Post.id_post
+  `, [u.ask, u.close, q.close])
 }
 
 export async function createPost({title, content, id_login}) {
@@ -58,7 +67,20 @@ export async function createQset({prompt, ressource_type, ressource_link, id_pos
 // -------------- postId -------------- //
 
 export async function fetchPost({id_post}) {
-  return db.query("SELECT * FROM `Post` WHERE id_post=?", [id_post])
+  return db.query(`
+      SELECT Post.id_post,
+             title,
+             content,
+             publish_date,
+             username AS publisher,
+             GROUP_CONCAT(DISTINCT id_vg SEPARATOR ',') AS vgd
+      FROM Post
+               LEFT JOIN Talk_about USING(id_post)
+               INNER JOIN Login ON Post.id_login = Login.id_login
+      WHERE id_post=?
+      GROUP BY Post.id_post
+      ORDER BY Post.id_post
+      `, [id_post])
 }
 
 export async function getQSetsFromPost({id_post}) {

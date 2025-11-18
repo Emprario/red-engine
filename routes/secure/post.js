@@ -37,7 +37,7 @@ router.get('/', async (req, res) => {
       "close": "%"
     }
   }
-  dc.postCon(req.query)
+  //dc.postCon(req.query)
 
   if (req.query.gs) {
     params.gs.ask = '1'
@@ -54,10 +54,20 @@ router.get('/', async (req, res) => {
     params.q.close = req.query.u + "%"
   }
 
-  dc.postCon(params)
+  //dc.postCon(params)
   try {
-    dc.postCon(await queryPostInfos(params))
-    const [r] = await queryPostInfos(params)
+    //dc.postCon(await queryPostInfos(params))
+    let [r] = await queryPostInfos(params)
+    r = r.map(x => {
+      //dc.postCon("lst::", x['vgd'].split(","))
+      if (x !== null) {
+        x["vgd"] = x["vgd"].split(",").map(x => parseInt(x))
+      } else {
+        x["vgd"] = []
+      }
+      return x
+    })
+
     return res.status(200).json(r)
   } catch (err) {
     dc.postCon(err)
@@ -113,7 +123,14 @@ router.post('/', async (req, res) => {
 router.get("/:postId", async (req, res) => {
 
   async function rootfetch({parentJson, id_post}) {
-    [parentJson["post"]] = await fetchPost({id_post})
+    [parentJson["post"]] = await fetchPost({id_post});
+    parentJson["post"] = parentJson["post"][0];
+    if (parentJson["post"]["vgd"] !== null) {
+      parentJson["post"]["vgd"] = parentJson["post"]["vgd"].split(",").map(x => parseInt(x))
+    } else {
+      parentJson["post"]["vgd"] = []
+    }
+
 
     if (parentJson["post"].length === 0) {
       throw new Error("No parent post")
@@ -213,7 +230,7 @@ router.delete("/:postId", async (req, res) => {
   req.body["id_post"] = req.params["postId"]
 
 
-  dc.postCon(req.body)
+  //dc.postCon(req.body)
 
   let r
   try {

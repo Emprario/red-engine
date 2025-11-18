@@ -100,11 +100,11 @@
           "publisher": {
             "$ref": "#/components/schemas/username"
           },
-          "plays": {
-            "$ref": "#/components/schemas/amount"
-          },
-          "signals": {
-            "$ref": "#/components/schemas/amount"
+          "vgd": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/id"
+            }
           }
         }
       },
