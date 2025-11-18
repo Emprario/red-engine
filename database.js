@@ -53,6 +53,10 @@ export async function createPost({title, content, id_login}) {
     [title, content, id_login])
 }
 
+export async function attachedVgToPost({id_post, id_vg}) {
+  return db.query(`INSERT INTO Talk_about (id_post, id_vg) VALUES (?, ?)`, [id_post, id_vg])
+}
+
 export async function createQuestion({is_correct, statement, id_set, id_question}) {
   return db.query("INSERT INTO `Question` (id_set, id_question, is_correct, statement) VALUES (?, ?, ?, ?)",
     [id_set, id_question, is_correct, statement])

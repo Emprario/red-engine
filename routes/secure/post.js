@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  attachedVgToPost,
   createPost, createQset, createQuestion,
   createReply,
   deletePost, fetchPost,
@@ -90,6 +91,15 @@ router.post('/', async (req, res) => {
     dc.postCon(err)
     return res.sendStatus(400)
   }
+  try {
+    for (let id of req.body.vgd) {
+      await attachedVgToPost({id_post: post.insertId, id_vg: id})
+    }
+  } catch (err) {
+    dc.postCon(err)
+    await deletePost({id_post: post.insertId, id_login: req.body["id_login"]})
+    return res.sendStatus(400)
+  }
   //dc.postCon(post)
 
   // 2. Create QSets
@@ -106,12 +116,14 @@ router.post('/', async (req, res) => {
           await createQuestion(qset.questionArray[i])
         } catch (err) {
           dc.postCon(err)
+          await deletePost({id_post: post.insertId, id_login: req.body["id_login"]})
           return res.sendStatus(400)
           // TODO: clean db before
         }
       }
     } catch (err) {
       dc.postCon(err)
+      await deletePost({id_post: post.insertId, id_login: req.body["id_login"]})
       return res.sendStatus(400)
       // TODO: clean db before
     }

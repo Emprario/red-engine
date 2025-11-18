@@ -101,10 +101,7 @@
             "$ref": "#/components/schemas/username"
           },
           "vgd": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/id"
-            }
+            "$ref": "#/components/schemas/vgdArray"
           }
         }
       },
@@ -116,6 +113,9 @@
           },
           "content": {
             "$ref": "#/components/schemas/content"
+          },
+          "vgd": {
+            "$ref": "#/components/schemas/vgdArray"
           },
           "qsetArray": {
             "$ref": "#/components/schemas/postQsetArray"
@@ -180,6 +180,12 @@
           "roles": {
             "$ref": "#/components/schemas/roles"
           }
+        }
+      },
+      "vgdArray": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/id"
         }
       },
       "vgd": {
