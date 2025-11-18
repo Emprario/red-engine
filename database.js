@@ -38,14 +38,15 @@ export async function queryPostInfos({gs, u, q}) {
              content,
              publish_date,
              username AS publisher,
-             GROUP_CONCAT(DISTINCT id_vg SEPARATOR ',') AS vgd
+             CONCAT(',', GROUP_CONCAT(DISTINCT id_vg ORDER BY id_vg ASC SEPARATOR ',' ), ',') AS vgd
       FROM Post
                LEFT JOIN Talk_about USING(id_post)
                INNER JOIN Login ON Post.id_login = Login.id_login
-      WHERE title IS NOT NULL
+      WHERE title IS NOT NULL AND LIKE ? AND title LIKE ?
       GROUP BY Post.id_post
+      HAVING CONCAT(',', GROUP_CONCAT(DISTINCT id_vg ORDER BY id_vg ASC SEPARATOR ',' ), ',') LIKE ?
       ORDER BY Post.id_post
-  `, [u.ask, u.close, q.close])
+  `, [u.close, gs.close, q.close])
 }
 
 export async function createPost({title, content, id_login}) {

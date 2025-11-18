@@ -26,32 +26,38 @@ router.use('/:postId', (req, res, next) => {
 router.get('/', async (req, res) => {
   const params = {
     "gs": {
-      "ask": '1',
-      "close": '1'
+      "close": '%'
     },
     "u": {
-      "ask": '1',
-      "close": '1'
+      "close": '%'
     },
     "q": {
-      "ask": 'title',
       "close": "%"
     }
   }
   //dc.postCon(req.query)
 
   if (req.query.gs) {
-    params.gs.ask = '1'
-    params.gs.close = '1'
+   //params.gs.ask = 'vgd'
+    params.gs.close = '%'
+    let prev = ''
+    for (let vg of req.query.gs.split('-').sort()) {
+      dc.postCon(parseInt(vg) - 1, prev)
+      if (parseInt(vg) - 1 === prev) {
+        params.gs.close = params.gs.close + vg + ","
+      } else {
+        params.gs.close = params.gs.close + "%," + vg + ","
+      }
+      prev = parseInt(vg)
+    }
+    params.gs.close += '%'
   }
 
   if (req.query.u) {
-    params.u.ask = "username"
     params.u.close = req.query.u
   }
 
   if (req.query.q) {
-    params.q.ask = "title"
     params.q.close = req.query.u + "%"
   }
 
@@ -62,7 +68,10 @@ router.get('/', async (req, res) => {
     r = r.map(x => {
       //dc.postCon("lst::", x['vgd'].split(","))
       if (x !== null) {
-        x["vgd"] = x["vgd"].split(",").map(x => parseInt(x))
+        let sp = x["vgd"].split(",")
+        sp.shift()
+        sp.pop()
+        x["vgd"] = sp.map(x => parseInt(x))
       } else {
         x["vgd"] = []
       }
