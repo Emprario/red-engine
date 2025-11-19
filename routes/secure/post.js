@@ -58,7 +58,7 @@ router.get('/', async (req, res) => {
   }
 
   if (req.query.q) {
-    params.q.close = req.query.u + "%"
+    params.q.close = req.query.q + "%"
   }
 
   //dc.postCon(params)

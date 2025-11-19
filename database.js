@@ -42,11 +42,11 @@ export async function queryPostInfos({gs, u, q}) {
       FROM Post
                LEFT JOIN Talk_about USING(id_post)
                INNER JOIN Login ON Post.id_login = Login.id_login
-      WHERE title IS NOT NULL AND LIKE ? AND title LIKE ?
+      WHERE title IS NOT NULL AND username LIKE ? AND title LIKE ?
       GROUP BY Post.id_post
       HAVING CONCAT(',', GROUP_CONCAT(DISTINCT id_vg ORDER BY id_vg ASC SEPARATOR ',' ), ',') LIKE ?
       ORDER BY Post.id_post
-  `, [u.close, gs.close, q.close])
+  `, [u.close, q.close, gs.close])
 }
 
 export async function createPost({title, content, id_login}) {
