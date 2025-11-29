@@ -112,6 +112,22 @@ CREATE TABLE Question
     FOREIGN KEY (id_set) REFERENCES QSet (id_set) ON DELETE CASCADE
 );
 
+CREATE TABLE Session
+(
+    id_post     INT,
+    id_set      INT,
+    id_question INT,
+    id_login    INT,
+    id_session  INT,
+    id_score    INT,
+    start_date  DATETIME,
+    PRIMARY KEY (id_post, id_set, id_question, id_login, id_session),
+    FOREIGN KEY (id_post) REFERENCES Post (id_post) ON DELETE CASCADE,
+    FOREIGN KEY (id_set, id_question) REFERENCES Question (id_set, id_question) ON DELETE CASCADE,
+    FOREIGN KEY (id_login) REFERENCES Login (id_login) ON DELETE CASCADE
+);
+
+
 INSERT INTO Role (id_role, quick)
 VALUES (1, 'sysadmin'),
        (2, 'manager');
