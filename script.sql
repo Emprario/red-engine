@@ -114,7 +114,7 @@ CREATE TABLE Question
 
 CREATE TABLE Session
 (
-    id_session  INT,
+    id_session  INT AUTO_INCREMENT,
     id_login    INT,
     id_post     INT,
     id_set      INT,
