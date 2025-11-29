@@ -6,6 +6,7 @@ const router = express.Router();
 let orSend, orJson;
 router.use((req, res, next) => {
   [orSend, orJson] = dc.log(dc.userCon, req, res, next, '(sysadmin)');
+  next()
 })
 
 router.post("/assign", async (req, res) => {
