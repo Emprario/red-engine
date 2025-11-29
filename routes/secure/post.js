@@ -109,7 +109,6 @@ router.post('/', async (req, res) => {
     await deletePost({id_post: post.insertId, id_login: req.body["id_login"]})
     return res.sendStatus(400)
   }
-  //dc.postCon(post)
 
   // 2. Create QSets
   for (const qset of req.body.qsetArray) {
@@ -233,14 +232,18 @@ router.post("/:postId/submit", async (req, res) => {
   )
 
   const mt = []
-
-  for (let i = 0; i < req.body.length; i++) {
-    if (!(req.body[i].id_set === r[i].id_set && req.body[i].id_question === r[i].id_question)) {
-      return res.sendStatus(400)
+  let j = 0
+  for (let i = 0; i < r.length && j < req.body.length; i++) {
+    //dc.postCon(i,j)
+    if (!(req.body[j].id_set === r[i].id_set && req.body[j].id_question === r[i].id_question)) {
+      //dc.postCon("Erreur Interne !!!")
+      //return res.sendStatus(500)
+      continue
     }
-    req.body[i]["right"] = req.body[i]["is_correct"] === !!r[i]["is_correct"]
-    delete req.body[i]["is_correct"]
-    mt.push(req.body[i])
+    req.body[j]["right"] = req.body[j]["is_correct"] === !!r[i]["is_correct"]
+    delete req.body[j]["is_correct"]
+    mt.push(req.body[j])
+    j++;
   }
 
   return res.status(200).send(mt)
