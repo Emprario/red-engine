@@ -23,6 +23,10 @@
       "description": "All post relative routes"
     },
     {
+      "name": "Session",
+      "description": "Get all your session results here"
+    },
+    {
       "name": "User",
       "description": "Everything you have to know about current user"
     },
@@ -177,6 +181,28 @@
         "type": "array",
         "items": {
           "$ref": "#/components/schemas/qsetNoID"
+        }
+      },
+      "getSessionArr": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/getSession"
+        }
+      },
+      "getSession": {
+        "type": "object",
+        "properties": {
+          "id_post": {
+            "$ref": "#/components/schemas/id"
+          },
+          "score": {
+            "$ref": "#/components/schemas/score"
+          },
+          "start_date": {
+            "type": "string",
+            "format": "datetime",
+            "example": "2008-10-29 14:56:59"
+          }
         }
       },
       "user": {
@@ -441,6 +467,10 @@
       "description": {
         "type": "string",
         "example": "A amazing description of a videogame"
+      },
+      "score": {
+        "type": "integer",
+        "example": 43
       },
       "assignRole": {
         "type": "object",
@@ -785,13 +815,105 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/answerRepSubArr"
+                  "type": "object",
+                  "properties": {
+                    "id_session": {
+                      "$ref": "#/components/schemas/id"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/answerRepSubArr"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
             "description": "Bad length"
+          },
+          "404": {
+            "description": "Post not found"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      }
+    },
+    "/post/{postId}/new-session": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "postId",
+          "schema": {
+            "$ref": "#/components/schemas/id"
+          },
+          "required": true,
+          "description": "The post Id to manage"
+        }
+      ],
+      "post": {
+        "tags": [
+          "Post"
+        ],
+        "description": "Create a new session to register a MCQ",
+        "responses": {
+          "201": {
+            "description": "Creation of a new session sucessfull ! Please find attached your session id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id_session": {
+                      "$ref": "#/components/schemas/id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post not found"
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      }
+    },
+    "/post/{postId}/score": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "postId",
+          "schema": {
+            "$ref": "#/components/schemas/id"
+          },
+          "required": true,
+          "description": "The post Id to manage"
+        }
+      ],
+      "post": {
+        "tags": [
+          "Post"
+        ],
+        "description": "Obtain an average result of all scores from a mcq",
+        "responses": {
+          "200": {
+            "description": "Successfull results !",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "AVG_score": {
+                      "$ref": "#/components/schemas/score"
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
             "description": "Post not found"
@@ -942,6 +1064,66 @@
           },
           "404": {
             "description": "Post not found"
+          }
+        }
+      }
+    },
+    "/session": {
+      "get": {
+        "description": "Query all sessions of a user",
+        "tags": [
+          "Session"
+        ],
+        "responses": {
+          "200": {
+            "description": "Return the result from db",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getSessionArr"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          }
+        }
+      }
+    },
+    "/session/{sessionId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "sessionId",
+          "schema": {
+            "$ref": "#/components/schemas/id"
+          },
+          "required": true,
+          "description": "The session Id to manage"
+        }
+      ],
+      "get": {
+        "description": "Query the result of a specific session",
+        "tags": [
+          "Session"
+        ],
+        "responses": {
+          "200": {
+            "description": "Return the result from db",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getSession"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "404": {
+            "description": "Session not found!"
           }
         }
       }

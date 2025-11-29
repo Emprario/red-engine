@@ -227,22 +227,22 @@ router.post("/:postId/submit", async (req, res) => {
   }
 
   // Sort our array
-  req.body.sort(
+  req.body.data.sort(
     (a, b) => ((a.id_set === b.id_set) && (a.id_question > b.id_question)) || (a.id_set > b.id_set)
   )
 
   const mt = []
   let j = 0
-  for (let i = 0; i < r.length && j < req.body.length; i++) {
+  for (let i = 0; i < r.length && j < req.body.data.length; i++) {
     //dc.postCon(i,j)
-    if (!(req.body[j].id_set === r[i].id_set && req.body[j].id_question === r[i].id_question)) {
+    if (!(req.body.data[j].id_set === r[i].id_set && req.body.data[j].id_question === r[i].id_question)) {
       //dc.postCon("Erreur Interne !!!")
       //return res.sendStatus(500)
       continue
     }
-    req.body[j]["right"] = req.body[j]["is_correct"] === !!r[i]["is_correct"]
-    delete req.body[j]["is_correct"]
-    mt.push(req.body[j])
+    req.body.data[j]["right"] = req.body.data[j]["is_correct"] === !!r[i]["is_correct"]
+    delete req.body.data[j]["is_correct"]
+    mt.push(req.body.data[j])
     j++;
   }
 
