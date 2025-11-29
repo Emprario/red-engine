@@ -7,6 +7,7 @@ const router = express.Router();
 let orSend, orJson;
 router.use((req, res, next) => {
   [orSend, orJson] = dc.log(dc.vgdCon, req, res, next, '(manager)');
+  next()
 })
 
 router.use('/:vgdId', (req, res, next) => {
