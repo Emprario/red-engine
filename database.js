@@ -88,6 +88,14 @@ export async function fetchPost({id_post}) {
       `, [id_post])
 }
 
+export async function updatePost({id_post, title, content}) {
+  return db.query("UPDATE `Post` SET title=?, content=? WHERE id_post=?",[title, content, id_post])
+}
+
+export async function unlinkVgToPost({id_post, id_vg}) {
+  return db.query("DELETE FROM `Talk_about` WHERE id_post=? AND id_vg=?",[id_post, id_vg])
+}
+
 export async function getQSetsFromPost({id_post}) {
   return db.query("SELECT * FROM `QSet` WHERE id_post = ?", [id_post])
 }

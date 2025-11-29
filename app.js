@@ -30,6 +30,13 @@ app.use(cors({
 // Swagger setup
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs));
 
+// Analyse body
+app.use((req,res,next)=>{
+  dc.svCon("Body:")
+  dc.svCon(req.body)
+  next()
+})
+
 // Unauthenticated access
 app.use('/auth', authRouter);
 

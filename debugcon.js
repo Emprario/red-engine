@@ -12,14 +12,14 @@ function log(con, req, res, next, base) {
   const originalSend = res.send;
   const originalJson = res.json;
 
-  islogging++;
+  islogging = 0;
 
   // Override res.send to capture the body
   res.send = (body) => {
     if (!islogging) {
       con('Response: [' + res.statusCode + '] ', body);
     }
-    islogging--;
+    //islogging--;
     originalSend.call(res, body);
   };
 
@@ -30,7 +30,7 @@ function log(con, req, res, next, base) {
       con('Response: (JSON) [' + res.statusCode + '] ');
       con(body)
     }
-    islogging--;
+    //islogging--;
     originalJson.call(res, body);
   };
 
@@ -47,4 +47,5 @@ export default {
   signalCon: debug("red-engine:route/post:signal"),
   userCon: debug("red-engine:route/user"),
   vgdCon: debug("red-engine:route/vgd"),
+  dgCon: debug("red-engine:debug"),
 }

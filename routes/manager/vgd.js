@@ -41,7 +41,8 @@ router.delete('/:vgdId', async (req, res) => {
     await deleteVgd({id_vg: req.params.vgdId})
   } catch (err) {
     dc.vgdCon(err)
-    return res.sendStatus(404)
+
+    return res.status(400).send("Verify VG exists. Try to unlink all post from this VG")
   }
 
   return res.sendStatus(200)

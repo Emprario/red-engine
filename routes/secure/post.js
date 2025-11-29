@@ -7,7 +7,7 @@ import {
   fetchReplies, fetchSubmitionAnswers,
   getQSetsFromPost, getQuestionsFromQSet,
   linkReply,
-  queryPostInfos
+  queryPostInfos, unlinkVgToPost, updatePost
 } from "../../database.js";
 import dc from "../../debugcon.js"
 
@@ -58,7 +58,7 @@ router.get('/', async (req, res) => {
   }
 
   if (req.query.q) {
-    params.q.close = req.query.q + "%"
+    params.q.close = "%" + req.query.q + "%"
   }
 
   //dc.postCon(params)
@@ -145,16 +145,16 @@ router.get("/:postId", async (req, res) => {
 
   async function rootfetch({parentJson, id_post}) {
     [parentJson["post"]] = await fetchPost({id_post});
+
+    if (parentJson["post"].length === 0) {
+      throw new Error("No parent post")
+    }
+
     parentJson["post"] = parentJson["post"][0];
     if (parentJson["post"]["vgd"] !== null) {
       parentJson["post"]["vgd"] = parentJson["post"]["vgd"].split(",").map(x => parseInt(x))
     } else {
       parentJson["post"]["vgd"] = []
-    }
-
-
-    if (parentJson["post"].length === 0) {
-      throw new Error("No parent post")
     }
 
     [parentJson["qset"]] = await getQSetsFromPost({id_post})
@@ -255,7 +255,7 @@ router.delete("/:postId", async (req, res) => {
 
   let r
   try {
-    r = await deletePost(req.body)
+    [r] = await deletePost(req.body)
   } catch (err) {
     dc.postCon(err)
     return res.sendStatus(400)
@@ -273,5 +273,87 @@ router.delete("/:postId", async (req, res) => {
   }
 })
 
+router.put("/:postId", async (req, res) => {
+  // First find out if post is post or play
+
+  // Fetch defaults for the post
+  req.body["id_post"] = req.params.postId
+  let defaultPreset;
+  try {
+    [defaultPreset] = await fetchPost(req.body);
+  } catch (err) {
+    dc.postCon(err)
+    return res.sendStatus(400)
+  }
+
+  if (defaultPreset.length === 0) {
+    dc.postCon("Unknown Post!")
+    return res.status(404).send("Unknown Post!")
+  }
+
+  defaultPreset = defaultPreset[0];
+
+  if (defaultPreset.id_login !== req.body["secure_login"]) {
+    return res.sendStatus(403)
+  }
+
+  if (defaultPreset["vgd"] !== null) {
+    defaultPreset["vgd"] = defaultPreset["vgd"].split(",").map(x => parseInt(x))
+  } else {
+    defaultPreset["vgd"] = []
+  }
+
+  //prevent create a new post by adding title
+  let is_reply = false
+  if (defaultPreset["title"] === null) {
+    delete defaultPreset["title"]
+    is_reply = true
+  }
+  delete defaultPreset["publish_date"]
+  delete defaultPreset["publisher"]
+
+  if (!is_reply && req.body.vgd) {
+    //dc.dgCon(req.body.vgd)
+    //dc.dgCon(defaultPreset["vgd"])
+    for (let id_vg of req.body.vgd) {
+      if (!defaultPreset["vgd"].includes(id_vg)) {
+        // post already exists only error is unknown vg
+        try {
+          await attachedVgToPost({id_post: req.body.id_post, id_vg})
+        } catch (err) {
+          dc.postCon(err)
+          return res.status(404).send("Unknown VG!")
+        }
+      }
+    }
+    for (let id_vg of defaultPreset["vgd"]) {
+      if (!req.body.vgd.includes(id_vg)) {
+        // post already exists only error is unknown vg
+        try {
+          await unlinkVgToPost({id_post: req.body.id_post, id_vg})
+        } catch (err) {
+          dc.postCon(err)
+          return res.res.status(404).send("Unknown VG!")
+        }
+      }
+    }
+  }
+
+  for (let param in defaultPreset) {
+    if (req.body[param]) {
+      defaultPreset[param] = req.body[param]
+    }
+  }
+  //dc.dgCon(defaultPreset)
+  try {
+    await updatePost(defaultPreset)
+  } catch (err) {
+      dc.postCon(err)
+    return res.sendStatus(400)
+  }
+
+
+  res.sendStatus(200)
+})
 
 export default router;

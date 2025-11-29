@@ -105,6 +105,20 @@
           }
         }
       },
+      "putPost": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "$ref": "#/components/schemas/title"
+          },
+          "content": {
+            "$ref": "#/components/schemas/content"
+          },
+          "vgd": {
+            "$ref": "#/components/schemas/vgdArray"
+          }
+        }
+      },
       "newPost": {
         "type": "object",
         "properties": {
@@ -341,13 +355,13 @@
       },
       "q": {
         "type": "string",
-        "example": "Query%20Example",
+        "example": "Query Example",
         "description": "The query is url encoded"
       },
       "gs": {
         "type": "string",
-        "example": "0%201%208",
-        "description": "The list is separated by space %20"
+        "example": "0-1-8",
+        "description": "The list is separated by dash -"
       },
       "username": {
         "type": "string",
@@ -648,19 +662,12 @@
         "tags": [
           "Post"
         ],
-        "description": "Modify a a specific post",
+        "description": "Modify a a specific post. Only certain fields can be added. Certain fields are restricted for replies like title and vgd",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/newReply"
-                  },
-                  {
-                    "$ref": "#/components/schemas/newPost"
-                  }
-                ]
+                "$ref": "#/components/schemas/putPost"
               }
             }
           }
@@ -762,7 +769,7 @@
         "tags": [
           "Post"
         ],
-        "description": "Reply to a specific post",
+        "description": "Submit a MCQ of a specific post, can be only some question sets. All questions must be submitted!",
         "requestBody": {
           "content": {
             "application/json": {
@@ -1042,14 +1049,14 @@
           "200": {
             "description": "Delete a video game"
           },
+          "400": {
+            "description": "Vgd not found"
+          },
           "401": {
             "$ref": "#/components/responses/401"
           },
           "403": {
             "$ref": "#/components/responses/403"
-          },
-          "404": {
-            "description": "Vgd not found"
           }
         }
       },

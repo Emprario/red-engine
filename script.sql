@@ -35,7 +35,7 @@ CREATE TABLE
 
 CREATE TABLE Reply
 (
-    id_post   INT,
+    id_post       INT,
     id_post_reply INT,
     PRIMARY KEY (id_post, id_post_reply),
     FOREIGN KEY (id_post) REFERENCES Post (id_post) ON DELETE CASCADE,
@@ -58,7 +58,7 @@ CREATE TABLE
     id_post INT,
     PRIMARY KEY (id_vg, id_post),
     FOREIGN KEY (id_vg) REFERENCES VGDiscover (id_vg) ON DELETE CASCADE,
-    FOREIGN KEY (id_post) REFERENCES Post (id_post)
+    FOREIGN KEY (id_post) REFERENCES Post (id_post) ON DELETE CASCADE
 );
 
 CREATE TABLE
@@ -93,21 +93,21 @@ CREATE TABLE
 
 CREATE TABLE QSet
 (
-    id_set        INT AUTO_INCREMENT,
-    prompt        VARCHAR(50) NOT NULL,
+    id_set         INT AUTO_INCREMENT,
+    prompt         VARCHAR(50) NOT NULL,
     ressource_link VARCHAR(50),
     ressource_type VARCHAR(50),
-    id_post INT NOT NULL,
+    id_post        INT         NOT NULL,
     PRIMARY KEY (id_set),
-    FOREIGN KEY(id_post) REFERENCES Post(id_post) ON DELETE CASCADE
+    FOREIGN KEY (id_post) REFERENCES Post (id_post) ON DELETE CASCADE
 );
 
 CREATE TABLE Question
 (
-    id_set         INT,
-    id_question    INT,
-    is_correct     INT NOT NULL,
-    statement      VARCHAR(50) NOT NULL,
+    id_set      INT,
+    id_question INT,
+    is_correct  INT         NOT NULL,
+    statement   VARCHAR(50) NOT NULL,
     PRIMARY KEY (id_set, id_question),
     FOREIGN KEY (id_set) REFERENCES QSet (id_set) ON DELETE CASCADE
 );
@@ -116,6 +116,53 @@ INSERT INTO Role (id_role, quick)
 VALUES (1, 'sysadmin'),
        (2, 'manager');
 
-#INSERT INTO Login (id_login, mail, password, username)
-#VALUES (1, 'root@example.com', 'root', 'root'),
-#       (2, 'for@example.com', 'meta', 'meta')
+INSERT INTO `Login`
+VALUES (1, 'courriel@example.com', '$2b$10$a3kOLslV3lHnjWiN08hvtOWraIRR5PNa6TAtU5MUEXiAH8fG5ftDq', 'myusername'),
+       (2, 'mail@example.com', '$2b$10$Ykfa8ryKLThCxMHNvDlJp.anFzVf7dMgtmwfP30tVg8VNV3EAZvWu', 'altusername');
+
+INSERT INTO `VGDiscover`
+VALUES (2, 'Mario', 'https://cdn.example.com/image.jpg', '2017-07-21', 'A amazing description of a videogame'),
+       (3, 'Zelda', 'https://cdn.example.com/image.jpg', '2021-07-21', 'A amazing description of a videogame'),
+       (4, 'Minecraft', 'https://cdn.example.com/image.jpg', '2017-07-21', 'A amazing description of a videogame');
+
+INSERT INTO `Post`
+VALUES (1, 'Hello World !', 'My name is Nico.', '2025-11-13 13:37:26', 1),
+       (2, 'My friends are gone', 'My name is Pierre.', '2025-11-13 13:37:55', 1),
+       (3, NULL, 'My surname is Nico.', '2025-11-13 13:38:31', 1),
+       (4, 'Altusername post', 'My name is Pierre.', '2025-11-13 13:41:41', 2),
+       (7, 'VG out', 'VGD NOw out !', '2025-11-18 14:17:52', 1);
+
+INSERT INTO `QSet`
+VALUES (1, 'What is the correct answer ?', 'https://cdn.example.com/image.jpg', 'image', 1),
+       (2, 'What is the correct answer ?', 'https://cdn.example.com/image.jpg', 'image', 2),
+       (3, 'What is the correct answer ?', 'https://cdn.example.com/image.jpg', 'image', 4),
+       (4, 'What is the correct answer ?', 'https://cdn.example.com/image.jpg', 'image', 7);
+
+INSERT INTO `Question`
+VALUES (1, 1, 1, 'A example of an affirmation.'),
+       (2, 1, 1, 'A example of an affirmation.'),
+       (3, 1, 1, 'A example of an affirmation.'),
+       (4, 1, 1, 'A example of an affirmation.');
+
+
+INSERT INTO `Play`
+VALUES (1, 1),
+       (2, 1);
+
+INSERT INTO `HAS_A`
+VALUES (1, 1),
+       (1, 2);
+
+INSERT INTO `Reply`
+VALUES (1, 3);
+
+INSERT INTO `Signal`
+VALUES (1, 1),
+       (2, 1);
+
+INSERT INTO `Talk_about`
+VALUES (2, 1),
+       (3, 1),
+       (2, 2),
+       (2, 4),
+       (2, 7);
