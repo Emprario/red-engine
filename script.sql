@@ -118,14 +118,13 @@ CREATE TABLE Session
     id_login    INT,
     id_post     INT,
     id_set      INT,
-    id_question INT,
     score    INT,
     start_date  DATETIME,
     PRIMARY KEY (id_session),
     FOREIGN KEY (id_login) REFERENCES Login (id_login) ON DELETE CASCADE,
     FOREIGN KEY (id_post) REFERENCES Post (id_post) ON DELETE CASCADE,
-    FOREIGN KEY (id_set, id_question) REFERENCES Question (id_set, id_question) ON DELETE CASCADE,
-    CONSTRAINT ONE_QUESTION_RECORD_ONLY UNIQUE (id_session,id_post,id_login,id_set,id_question)
+    FOREIGN KEY (id_set) REFERENCES QSet (id_set) ON DELETE CASCADE,
+    CONSTRAINT ONE_QUESTION_RECORD_ONLY UNIQUE (id_session,id_post,id_login,id_set)
 );
 
 

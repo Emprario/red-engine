@@ -4,8 +4,10 @@ import dc from "../../debugcon.js"
 
 const router = express.Router();
 
+let orSend, orJson
 router.use((req, res, next) => {
-  dc.log(dc.userCon, req, res, next, '(secure)');
+  [orSend, orJson] = dc.log(dc.userCon, req, res, next, '(secure)');
+  next()
 })
 
 router.get("/me", async (req, res) => {
@@ -28,6 +30,11 @@ router.get("/me", async (req, res) => {
   let [r] = await getUserRoles(u);
   u["roles"] = r.map(r => r.quick)
   return res.status(200).json(u);
+})
+
+router.use((req, res, next) => {
+  dc.unlog(dc.userCon, req, res, next, '(secure)', orSend, orJson);
+  next()
 })
 
 export default router;

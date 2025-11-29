@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  addRecordToSession,
   attachedVgToPost,
   createPost, createQset, createQuestion,
   createReply,
@@ -7,14 +8,16 @@ import {
   fetchReplies, fetchSubmitionAnswers,
   getQSetsFromPost, getQuestionsFromQSet,
   linkReply,
-  queryPostInfos, unlinkVgToPost, updatePost
+  queryPostInfos, reserveNewSession, unlinkVgToPost, updatePost
 } from "../../database.js";
 import dc from "../../debugcon.js"
 
 const router = express.Router();
 
+let orSend, orJson;
 router.use((req, res, next) => {
-  dc.log(dc.postCon, req, res, next, '(secure)');
+  [orSend, orJson] = dc.log(dc.postCon, req, res, next, '(secure)');
+  next()
 })
 
 router.use('/:postId', (req, res, next) => {
@@ -211,6 +214,23 @@ router.post("/:postId/reply", async (req, res) => {
   res.sendStatus(201)
 })
 
+router.post("/:postId/new-session", async (req, res) => {
+  req.body["id_login"] = req.body["secure_id"]
+  req.body["id_post"] = req.params["postId"]
+
+  let new_session;
+  try {
+    [new_session] = await reserveNewSession(req.body)
+  } catch (err) {
+    dc.postCon(err)
+    return res.sendStatus(404)
+  }
+
+  //dc.dgCon(new_session)
+  return res.status(201).json({id_session: new_session.insertId})
+
+})
+
 router.post("/:postId/submit", async (req, res) => {
 
   req.body["id_post"] = req.params.postId
@@ -231,7 +251,20 @@ router.post("/:postId/submit", async (req, res) => {
     (a, b) => ((a.id_set === b.id_set) && (a.id_question > b.id_question)) || (a.id_set > b.id_set)
   )
 
+  function right2score(is_correct, right) {
+    if (!right) {
+      return -1
+    } else {
+      if (is_correct) {
+        return 1
+      } else {
+        return 0
+      }
+    }
+  }
+
   const mt = []
+  const ms = {}
   let j = 0
   for (let i = 0; i < r.length && j < req.body.data.length; i++) {
     //dc.postCon(i,j)
@@ -241,9 +274,29 @@ router.post("/:postId/submit", async (req, res) => {
       continue
     }
     req.body.data[j]["right"] = req.body.data[j]["is_correct"] === !!r[i]["is_correct"]
+    if (!ms[req.body.data[j].id_set]) {
+      ms[req.body.data[j].id_set] = 0
+    }
+    ms[req.body.data[j].id_set] += right2score(!!r[i]["is_correct"], req.body.data[j]["right"])
     delete req.body.data[j]["is_correct"]
     mt.push(req.body.data[j])
     j++;
+  }
+
+  // Convert ms to score
+  for (let id_set in ms) {
+    try {
+      await addRecordToSession({
+      id_session: req.body["id_session"],
+      id_login: req.body["secure_id"],
+      id_post: req.params.postId,
+      id_set,
+      score: Math.max(ms[id_set], 0)
+    })
+    } catch (err) {
+      dc.postCon(err)
+      return res.sendStatus(400)
+    }
   }
 
   return res.status(200).send(mt)
@@ -351,12 +404,17 @@ router.put("/:postId", async (req, res) => {
   try {
     await updatePost(defaultPreset)
   } catch (err) {
-      dc.postCon(err)
+    dc.postCon(err)
     return res.sendStatus(400)
   }
 
 
   res.sendStatus(200)
+})
+
+router.use((req, res, next) => {
+  dc.unlog(dc.postCon, req, res, next, '(secure)', orSend, orJson);
+  next()
 })
 
 export default router;

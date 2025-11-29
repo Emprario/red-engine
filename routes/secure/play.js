@@ -4,8 +4,10 @@ import dc from "../../debugcon.js"
 
 const router = express.Router();
 
+let orSend, orJson;
 router.use((req, res, next) => {
-  dc.log(dc.playCon, req, res, next, '(secure)');
+  [orSend, orJson] = dc.log(dc.playCon, req, res, next, '(secure)');
+  next()
 })
 
 router.use((req, res, next) => {
@@ -54,6 +56,11 @@ router.delete('/', async (req, res) => {
   }
 
   return res.sendStatus(200)
+})
+
+router.use((req, res, next) => {
+  dc.unlog(dc.playCon, req, res, next, '(secure)', orSend, orJson);
+  next()
 })
 
 export default router;

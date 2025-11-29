@@ -3,8 +3,9 @@ import {getRoleId, assignRole, getUserInfoFromUsername, deleteRole} from "../../
 import dc from "../../debugcon.js"
 const router = express.Router();
 
+let orSend, orJson;
 router.use((req, res, next) => {
-  dc.log(dc.userCon, req, res, next, '(sysadmin)');
+  [orSend, orJson] = dc.log(dc.userCon, req, res, next, '(sysadmin)');
 })
 
 router.post("/assign", async (req, res) => {
@@ -81,6 +82,11 @@ router.delete("/assign", async (req, res) => {
   }
 
   return res.sendStatus(200)
+})
+
+router.use((req, res, next) => {
+  dc.unlog(dc.userCon, req, res, next, '(sysadmin)', orSend, orJson);
+  next()
 })
 
 export default router;

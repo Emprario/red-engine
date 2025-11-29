@@ -4,8 +4,10 @@ import dc from "../../debugcon.js"
 
 const router = express.Router();
 
+let orSend, orJson
 router.use((req, res, next) => {
-  dc.log(dc.vgdCon, req, res, next, '(secure)');
+  [orSend, orJson] = dc.log(dc.vgdCon, req, res, next, '(secure)');
+  next()
 })
 
 router.use('/:vgdId', (req, res, next) => {
@@ -40,6 +42,11 @@ router.get('/:vgdId', async (req, res) => {
   }
 
   return res.status(200).json(alls[0]);
+})
+
+router.use((req, res, next) => {
+  dc.unlog(dc.vgdCon, req, res, next, '(secure)', orSend, orJson);
+  next()
 })
 
 export default router;

@@ -5,8 +5,10 @@ import {generateToken, validateUser, hashPassword} from "../jwt.js";
 
 const router = express.Router();
 
+let orSend, orJson
 router.use((req, res, next) => {
-  dc.log(dc.authCon, req, res, next, '() ');
+  [orSend, orJson] = dc.log(dc.authCon, req, res, next, '() ');
+  next()
 })
 
 router.post("/login", async (req, res, next) => {
@@ -46,5 +48,10 @@ router.post("/sign-in", async (req, res, next) => {
   return res.sendStatus(200)
 });
 
+
+router.use((req, res, next) => {
+  dc.unlog(dc.authCon, req, res, next, '()', orSend, orJson);
+  next()
+})
 
 export default router;

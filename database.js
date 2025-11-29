@@ -131,6 +131,19 @@ export async function fetchSubmitionAnswers({id_post}) {
     "ORDER BY Qt.id_set, Qt.id_question", [id_post])
 }
 
+export async function reserveNewSession({id_login,id_post}) {
+  return db.query("INSERT INTO `Session` (id_login,id_post,id_set,score,start_date) VALUES (?, ?, null, 0, CURRENT_TIMESTAMP)", [id_login, id_post])
+}
+
+export async function addRecordToSession({id_session,id_login,id_post,id_set,score}) {
+  return db.query("INSERT INTO `Session` (id_session,id_login,id_post,id_set,score,start_date) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)", [
+    id_session, id_login, id_post, id_set, score
+  ])
+}
+
+export async function getAvgScoreFromPost({id_post}) {
+  return db.query("SELECT AVG(SELECT SUM(score) FROM `Session` WHERE id_post=? GROUP BY id_session) AS AVG_score FROM `Session`", [id_post])
+}
 
 // --------------- play --------------- //
 
@@ -163,6 +176,18 @@ export async function getSignaled({id_post, id_login}) {
 
 export async function getAmountSignal({id_post}) {
   return db.query("SELECT COUNT(*) AS 'AMOUNT' FROM `Signal` WHERE id_post=?", [id_post])
+}
+
+// ============= SESSION ============== //
+
+export async function getSessionScore({id_session, id_login}) {
+  return db.query("SELECT FIRST(id_post) AS id_post, SUM(score) AS score, MIN(start_date) AS start_date FROM `Session` WHERE id_login=? AND id_session=? GROUP BY id_session", [
+    id_login, id_session
+  ])
+}
+
+export async function getAllMySessions() {
+  return db.query("SELECT FIRST(id_post) AS id_post, SUM(score) AS score, MIN(start_date) AS start_date FROM `Session` GROUP BY id_session")
 }
 
 // =============== USER =============== //

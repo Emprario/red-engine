@@ -1,7 +1,5 @@
 import debug from 'debug';
 
-let islogging = -1;
-
 // Wrapper function
 function log(con, req, res, next, base) {
   if (base === undefined || base == null) {
@@ -12,33 +10,40 @@ function log(con, req, res, next, base) {
   const originalSend = res.send;
   const originalJson = res.json;
 
-  islogging = 0;
-
   // Override res.send to capture the body
   res.send = (body) => {
-    if (!islogging) {
-      con('Response: [' + res.statusCode + '] ', body);
-    }
-    //islogging--;
+    res.send = originalSend
+    res.json = originalJson;
+    con('Response: [' + res.statusCode + '] ', body);
     originalSend.call(res, body);
   };
 
   // Override res.json to capture the body
   res.json = (body) => {
     res.send = originalSend;
-    if (!islogging) {
-      con('Response: (JSON) [' + res.statusCode + '] ');
-      con(body)
-    }
-    //islogging--;
+    res.json = originalJson;
+    con('Response: (JSON) [' + res.statusCode + '] ');
+    con(body)
     originalJson.call(res, body);
   };
 
-  next();
+  return [originalSend, originalJson]
+}
+
+// Wrapper function
+function unlog(con, req, res, next, base, originalSend, originalJson) {
+  if (base === undefined || base == null) {
+    base = ""
+  }
+  con('EndZone:', req.method, base + req.path, req.query);
+
+  res.send = originalSend;
+  res.json = originalJson;
 }
 
 export default {
   log: log,
+  unlog: unlog,
   svCon: debug('red-engine:server'),
   dbCon: debug("red-engine:database"),
   authCon: debug("red-engine:route/auth"),

@@ -4,8 +4,10 @@ import dc from "../../debugcon.js"
 
 const router = express.Router();
 
+let orSend, orJson;
 router.use((req, res, next) => {
-  dc.log(dc.postCon, req, res, next, '(manager)');
+  [orSend, orJson] = dc.log(dc.postCon, req, res, next, '(manager)');
+  next()
 })
 
 router.delete("/:postId", async (req, res) => {
@@ -24,6 +26,11 @@ router.delete("/:postId", async (req, res) => {
   } else {
     return res.sendStatus(404)
   }
+})
+
+router.use((req, res, next) => {
+  dc.unlog(dc.postCon, req, res, next, '(manager)', orSend, orJson);
+  next()
 })
 
 
