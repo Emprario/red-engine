@@ -52,5 +52,6 @@ export default {
   signalCon: debug("red-engine:route/post:signal"),
   userCon: debug("red-engine:route/user"),
   vgdCon: debug("red-engine:route/vgd"),
+  ssCon: debug("red-engine:route/session"),
   dgCon: debug("red-engine:debug"),
 }

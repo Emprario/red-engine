@@ -5,8 +5,8 @@ import {
   createPost, createQset, createQuestion,
   createReply,
   deletePost, fetchPost,
-  fetchReplies, fetchSubmitionAnswers,
-  getQSetsFromPost, getQuestionsFromQSet,
+  fetchReplies, fetchSubmitionAnswers, getAvgScoreFromPost,
+  getQSetsFromPost, getQuestionsFromQSet, getSessionScore,
   linkReply,
   queryPostInfos, reserveNewSession, unlinkVgToPost, updatePost
 } from "../../database.js";
@@ -41,7 +41,7 @@ router.get('/', async (req, res) => {
   //dc.postCon(req.query)
 
   if (req.query.gs) {
-   //params.gs.ask = 'vgd'
+    //params.gs.ask = 'vgd'
     params.gs.close = '%'
     let prev = ''
     for (let vg of req.query.gs.split('-').sort()) {
@@ -214,7 +214,7 @@ router.post("/:postId/reply", async (req, res) => {
   res.sendStatus(201)
 })
 
-router.post("/:postId/new-session", async (req, res) => {
+/*router.post("/:postId/new-session", async (req, res) => {
   req.body["id_login"] = req.body["secure_id"]
   req.body["id_post"] = req.params["postId"]
 
@@ -229,6 +229,24 @@ router.post("/:postId/new-session", async (req, res) => {
   //dc.dgCon(new_session)
   return res.status(201).json({id_session: new_session.insertId})
 
+})*/
+
+router.post("/:postId/score", async (req, res) => {
+  let r;
+  try {
+    [r] = await getAvgScoreFromPost({id_post: req.params.postId})
+  } catch (err) {
+    dc.ssCon(err)
+    return res.sendStatus(404)
+  }
+
+  if (r.length !== 1) {
+    res.sendStatus(404)
+  }
+
+  r[0] = r
+
+  return res.status(200).send(r)
 })
 
 router.post("/:postId/submit", async (req, res) => {
@@ -284,22 +302,44 @@ router.post("/:postId/submit", async (req, res) => {
   }
 
   // Convert ms to score
+  let newId = -1
   for (let id_set in ms) {
     try {
-      await addRecordToSession({
-      id_session: req.body["id_session"],
-      id_login: req.body["secure_id"],
-      id_post: req.params.postId,
-      id_set,
-      score: Math.max(ms[id_set], 0)
-    })
+      let record = {
+        id_login: req.body["secure_id"],
+        id_post: req.params.postId,
+        id_set,
+        score: Math.max(ms[id_set], 0)
+      }
+      if (req.body["id_session"] !== null) {
+        record.id_session = req.body["id_session"]
+        await addRecordToSession(record)
+      } else {
+        let [r] = await reserveNewSession(record)
+        newId = r.insertId
+      }
+
     } catch (err) {
       dc.postCon(err)
       return res.sendStatus(400)
     }
   }
 
-  return res.status(200).send(mt)
+  let returnObject
+  if (newId >= 0) {
+    returnObject  ={
+      id_session: newId,
+      data: mt
+    }
+  } else {
+    returnObject = {
+      id_session: req.body["id_session"],
+      data: mt
+    }
+  }
+
+  return res.status(200).send(returnObject)
+
 })
 
 router.delete("/:postId", async (req, res) => {

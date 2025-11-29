@@ -114,17 +114,16 @@ CREATE TABLE Question
 
 CREATE TABLE Session
 (
-    id_session  INT AUTO_INCREMENT,
+    id_session  INT,
     id_login    INT,
     id_post     INT,
     id_set      INT,
     score    INT,
     start_date  DATETIME,
-    PRIMARY KEY (id_session),
+    PRIMARY KEY (id_session,id_post,id_login,id_set),
     FOREIGN KEY (id_login) REFERENCES Login (id_login) ON DELETE CASCADE,
     FOREIGN KEY (id_post) REFERENCES Post (id_post) ON DELETE CASCADE,
-    FOREIGN KEY (id_set) REFERENCES QSet (id_set) ON DELETE CASCADE,
-    CONSTRAINT ONE_QUESTION_RECORD_ONLY UNIQUE (id_session,id_post,id_login,id_set)
+    FOREIGN KEY (id_set) REFERENCES QSet (id_set) ON DELETE CASCADE
 );
 
 

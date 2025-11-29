@@ -799,7 +799,7 @@
         "tags": [
           "Post"
         ],
-        "description": "Submit a MCQ of a specific post, can be only some question sets. All questions must be submitted!",
+        "description": "Submit a MCQ of a specific post, can be only some question sets. All questions must be submitted! The id_session can be omitted (null) to create a new session",
         "requestBody": {
           "content": {
             "application/json": {
@@ -807,7 +807,15 @@
                 "type": "object",
                 "properties": {
                   "id_session": {
-                    "$ref": "#/components/schemas/id"
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/id"
+                      },
+                      {
+                        "type": "null",
+                        "example": null
+                      }
+                    ]
                   },
                   "data": {
                     "$ref": "#/components/schemas/answerSubArr"
@@ -823,55 +831,21 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/answerRepSubArr"
+                  "type": "object",
+                  "properties": {
+                    "id_session": {
+                      "$ref": "#/components/schemas/id"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/answerRepSubArr"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
             "description": "Bad length"
-          },
-          "404": {
-            "description": "Post not found"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          }
-        }
-      }
-    },
-    "/post/{postId}/new-session": {
-      "parameters": [
-        {
-          "in": "path",
-          "name": "postId",
-          "schema": {
-            "$ref": "#/components/schemas/id"
-          },
-          "required": true,
-          "description": "The post Id to manage"
-        }
-      ],
-      "post": {
-        "tags": [
-          "Post"
-        ],
-        "description": "Create a new session to register a MCQ",
-        "responses": {
-          "201": {
-            "description": "Creation of a new session sucessfull ! Please find attached your session id",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "id_session": {
-                      "$ref": "#/components/schemas/id"
-                    }
-                  }
-                }
-              }
-            }
           },
           "404": {
             "description": "Post not found"

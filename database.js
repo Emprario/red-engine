@@ -37,12 +37,14 @@ export async function queryPostInfos({gs, u, q}) {
              title,
              content,
              publish_date,
-             username AS publisher,
+             username                                                                         AS publisher,
              CONCAT(',', GROUP_CONCAT(DISTINCT id_vg ORDER BY id_vg ASC SEPARATOR ',' ), ',') AS vgd
       FROM Post
-               LEFT JOIN Talk_about USING(id_post)
+               LEFT JOIN Talk_about USING (id_post)
                INNER JOIN Login ON Post.id_login = Login.id_login
-      WHERE title IS NOT NULL AND username LIKE ? AND title LIKE ?
+      WHERE title IS NOT NULL
+        AND username LIKE ?
+        AND title LIKE ?
       GROUP BY Post.id_post
       HAVING CONCAT(',', GROUP_CONCAT(DISTINCT id_vg ORDER BY id_vg ASC SEPARATOR ',' ), ',') LIKE ?
       ORDER BY Post.id_post
@@ -55,7 +57,8 @@ export async function createPost({title, content, id_login}) {
 }
 
 export async function attachedVgToPost({id_post, id_vg}) {
-  return db.query(`INSERT INTO Talk_about (id_post, id_vg) VALUES (?, ?)`, [id_post, id_vg])
+  return db.query(`INSERT INTO Talk_about (id_post, id_vg)
+                   VALUES (?, ?)`, [id_post, id_vg])
 }
 
 export async function createQuestion({is_correct, statement, id_set, id_question}) {
@@ -77,23 +80,23 @@ export async function fetchPost({id_post}) {
              title,
              content,
              publish_date,
-             username AS publisher,
+             username                                   AS publisher,
              GROUP_CONCAT(DISTINCT id_vg SEPARATOR ',') AS vgd
       FROM Post
-               LEFT JOIN Talk_about USING(id_post)
+               LEFT JOIN Talk_about USING (id_post)
                INNER JOIN Login ON Post.id_login = Login.id_login
-      WHERE id_post=?
+      WHERE id_post = ?
       GROUP BY Post.id_post
       ORDER BY Post.id_post
-      `, [id_post])
+  `, [id_post])
 }
 
 export async function updatePost({id_post, title, content}) {
-  return db.query("UPDATE `Post` SET title=?, content=? WHERE id_post=?",[title, content, id_post])
+  return db.query("UPDATE `Post` SET title=?, content=? WHERE id_post=?", [title, content, id_post])
 }
 
 export async function unlinkVgToPost({id_post, id_vg}) {
-  return db.query("DELETE FROM `Talk_about` WHERE id_post=? AND id_vg=?",[id_post, id_vg])
+  return db.query("DELETE FROM `Talk_about` WHERE id_post=? AND id_vg=?", [id_post, id_vg])
 }
 
 export async function getQSetsFromPost({id_post}) {
@@ -131,11 +134,13 @@ export async function fetchSubmitionAnswers({id_post}) {
     "ORDER BY Qt.id_set, Qt.id_question", [id_post])
 }
 
-export async function reserveNewSession({id_login,id_post}) {
-  return db.query("INSERT INTO `Session` (id_login,id_post,id_set,score,start_date) VALUES (?, ?, null, 0, CURRENT_TIMESTAMP)", [id_login, id_post])
+export async function reserveNewSession({id_login, id_post, id_set, score}) {
+  return db.query("INSERT INTO `Session` (id_login,id_post,id_set,score,start_date) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)", [
+    id_login, id_post, id_set, score
+  ])
 }
 
-export async function addRecordToSession({id_session,id_login,id_post,id_set,score}) {
+export async function addRecordToSession({id_session, id_login, id_post, id_set, score}) {
   return db.query("INSERT INTO `Session` (id_session,id_login,id_post,id_set,score,start_date) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)", [
     id_session, id_login, id_post, id_set, score
   ])
@@ -181,13 +186,13 @@ export async function getAmountSignal({id_post}) {
 // ============= SESSION ============== //
 
 export async function getSessionScore({id_session, id_login}) {
-  return db.query("SELECT FIRST(id_post) AS id_post, SUM(score) AS score, MIN(start_date) AS start_date FROM `Session` WHERE id_login=? AND id_session=? GROUP BY id_session", [
+  return db.query("SELECT MAX(id_post) AS id_post, SUM(score) AS score, MIN(start_date) AS start_date FROM `Session` WHERE id_login=? AND id_session=? GROUP BY id_session", [
     id_login, id_session
   ])
 }
 
-export async function getAllMySessions() {
-  return db.query("SELECT FIRST(id_post) AS id_post, SUM(score) AS score, MIN(start_date) AS start_date FROM `Session` GROUP BY id_session")
+export async function getAllMySessions({id_login}) {
+  return db.query("SELECT MAX(id_post) AS id_post, SUM(score) AS score, MIN(start_date) AS start_date FROM `Session` WHERE id_login=? GROUP BY id_session", [id_login])
 }
 
 // =============== USER =============== //

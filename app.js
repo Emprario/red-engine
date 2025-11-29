@@ -7,6 +7,7 @@ import authRouter from './routes/auth.js';
 import secPostRouter from './routes/secure/post.js';
 import secPlayRouter from "./routes/secure/play.js"
 import secSignalRouter from "./routes/secure/signal.js"
+import sessionRouter from "./routes/secure/session.js"
 import secUserRouter from './routes/secure/user.js';
 import secVgdRouter from './routes/secure/vgd.js'
 import mgrPostRouter from './routes/manager/post.js';
@@ -96,6 +97,7 @@ app.use(async (req, res, next) => {
     req.body.id_post = req.params.postId
     secSignalRouter(req, res, next)
   })
+  app.use('/session', sessionRouter)
   app.use('/user', secUserRouter);
 
   // Error 404 handler
