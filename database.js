@@ -120,6 +120,10 @@ export async function deletePost({id_post, id_login}) {
   return db.query("DELETE FROM `Post` WHERE id_post=? AND id_login=?", [id_post, id_login])
 }
 
+export async function deletePostManager({id_post}) {
+  return db.query("DELETE FROM `Post` WHERE id_post=?", [id_post])
+}
+
 export async function fetchSubmitionAnswers({id_post}) {
   return db.query("SELECT Qt.id_set, Qt.id_question, Qt.is_correct FROM Question AS Qt " +
     "INNER JOIN QSet AS Qs ON Qs.id_set = Qt.id_set " +
