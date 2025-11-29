@@ -114,14 +114,14 @@ CREATE TABLE Question
 
 CREATE TABLE Session
 (
+    id_session  INT AUTO_INCREMENT,
     id_post     INT,
     id_set      INT,
     id_question INT,
     id_login    INT,
-    id_session  INT,
-    id_score    INT,
+    score    INT,
     start_date  DATETIME,
-    PRIMARY KEY (id_post, id_set, id_question, id_login, id_session),
+    PRIMARY KEY (id_session, id_post, id_set, id_question, id_login),
     FOREIGN KEY (id_post) REFERENCES Post (id_post) ON DELETE CASCADE,
     FOREIGN KEY (id_set, id_question) REFERENCES Question (id_set, id_question) ON DELETE CASCADE,
     FOREIGN KEY (id_login) REFERENCES Login (id_login) ON DELETE CASCADE
