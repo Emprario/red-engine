@@ -41,7 +41,7 @@ router.get('/:sessionId', async (req, res) => {
     res.sendStatus(404)
   }
 
-  r[0] = r
+  r = r[0]
 
   return res.status(200).send(r)
 })
