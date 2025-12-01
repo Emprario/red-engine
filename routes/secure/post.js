@@ -231,7 +231,7 @@ router.post("/:postId/reply", async (req, res) => {
 
 })*/
 
-router.post("/:postId/score", async (req, res) => {
+router.get("/:postId/score", async (req, res) => {
   let r;
   try {
     [r] = await getAvgScoreFromPost({id_post: req.params.postId})
