@@ -147,7 +147,13 @@ export async function addRecordToSession({id_session, id_login, id_post, id_set,
 }
 
 export async function getAvgScoreFromPost({id_post}) {
-  return db.query("SELECT AVG(SELECT SUM(score) FROM `Session` WHERE id_post=? GROUP BY id_session) AS AVG_score FROM `Session`", [id_post])
+  return db.query(`
+    SELECT AVG(total_score) AS AVG_score
+    FROM (SELECT SUM(score) AS total_score
+          FROM \`Session\`
+          WHERE id_post = ?
+          GROUP BY id_session) AS sub;
+  `, [id_post])
 }
 
 // --------------- play --------------- //
@@ -192,7 +198,7 @@ export async function getSessionScore({id_session, id_login}) {
 }
 
 export async function getAllMySessions({id_login}) {
-  return db.query("SELECT MAX(id_post) AS id_post, SUM(score) AS score, MIN(start_date) AS start_date FROM `Session` WHERE id_login=? GROUP BY id_session", [id_login])
+  return db.query("SELECT MAX(id_post) AS id_post, SUM(score) AS score, MIN(start_date) AS start_date FROM `Session` WHERE id_login=? GROUP BY id_session ORDER BY start_date DESC LIMIT 3 ", [id_login])
 }
 
 // =============== USER =============== //
