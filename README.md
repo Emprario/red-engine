@@ -16,9 +16,22 @@ Node.js version 24.7.0 or more with these extra modules
 
 ## How to run
 
-1. Clone the repo : `git clone https://github.com/Emprario/red-engine.git`
-2. Go to repo directory
-3. Run (enable debugging)
-   + Linux/MacOS: `npm run devel`
-   + Windows: `npm run win` (require powershell script enabled)
-3. Run (production): `npm run start`
+1. Prepare a **MariaDB** database (**the project uses MARIADB specific functions**).
+2. Create an empty database
+3. Run the SQL script provided (`/script.sql`). It will create necessary tables and populate DB.
+4. Create a `/.env` file with the provided template. Default values are given to make an example - consider to change
+   them.
+
+```dotenv
+SECRET=BadSecretKey4Jwt
+DB_PASSWORD=secret
+SALT_ROUNDS=10
+PORT=3000
+```
+
+5. Clone the repo : `git clone https://github.com/Emprario/red-engine.git`
+6. Go to repo directory
+7. Run as dev (enable debugging):
+    + Linux/MacOS: `npm run devel`
+    + Windows (require powershell script enabled): `npm run win`
+8. Run for production (no debugging logs): `npm run start`
