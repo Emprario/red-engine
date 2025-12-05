@@ -34,7 +34,11 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs));
 // Analyse body
 app.use((req,res,next)=>{
   dc.svCon("Body:")
-  dc.svCon(req.body)
+  if (req.body.hasOwnProperty("password")) {
+    dc.svCon("## Redacted (body contains password) ##")
+  } else {
+    dc.svCon(req.body)
+  }
   next()
 })
 

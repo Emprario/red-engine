@@ -1,7 +1,7 @@
 import debug from 'debug';
 
 // Wrapper function
-function log(con, req, res, next, base) {
+function log(con, req, res, next, base, nobody = false) {
   if (base === undefined || base == null) {
     base = ""
   }
@@ -14,7 +14,11 @@ function log(con, req, res, next, base) {
   res.send = (body) => {
     res.send = originalSend
     res.json = originalJson;
-    con('Response: [' + res.statusCode + '] ', body);
+    if (nobody) {
+      con('Response: [' + res.statusCode + '] ')
+    } else {
+      con('Response: [' + res.statusCode + '] ', body);
+    }
     originalSend.call(res, body);
   };
 
@@ -23,7 +27,9 @@ function log(con, req, res, next, base) {
     res.send = originalSend;
     res.json = originalJson;
     con('Response: (JSON) [' + res.statusCode + '] ');
-    con(body)
+    if (!nobody) {
+      con(body)
+    }
     originalJson.call(res, body);
   };
 

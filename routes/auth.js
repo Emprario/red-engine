@@ -7,7 +7,7 @@ const router = express.Router();
 
 let orSend, orJson
 router.use((req, res, next) => {
-  [orSend, orJson] = dc.log(dc.authCon, req, res, next, '() ');
+  [orSend, orJson] = dc.log(dc.authCon, req, res, next, '() ', true);
   next()
 })
 
