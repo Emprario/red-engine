@@ -25,6 +25,9 @@ Node.js version 24.7.0 or more with these extra modules
 ```dotenv
 SECRET=BadSecretKey4Jwt
 DB_PASSWORD=secret
+DB_USER=root
+DB_NAME=awp_vgm
+HOST=localhost
 SALT_ROUNDS=10
 PORT=3000
 ```
