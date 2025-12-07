@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "devel": "DEBUG=\"red-engine:* node\" ./bin/www",
+    "devel": "DEBUG=\"red-engine:*\" node ./bin/www",
     "win": "pwsh .\\bin\\run.ps1"
   },
   "type": "module",
