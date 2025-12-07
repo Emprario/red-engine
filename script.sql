@@ -136,9 +136,9 @@ VALUES (1, 'courriel@example.com', '$2b$10$a3kOLslV3lHnjWiN08hvtOWraIRR5PNa6TAtU
        (2, 'mail@example.com', '$2b$10$Ykfa8ryKLThCxMHNvDlJp.anFzVf7dMgtmwfP30tVg8VNV3EAZvWu', 'altusername');
 
 INSERT INTO `VGDiscover`
-VALUES (2, 'Mario', 'https://cdn.example.com/image.jpg', '2017-07-21', 'A amazing description of a videogame'),
-       (3, 'Zelda', 'https://cdn.example.com/image.jpg', '2021-07-21', 'A amazing description of a videogame'),
-       (4, 'Minecraft', 'https://cdn.example.com/image.jpg', '2017-07-21', 'A amazing description of a videogame');
+VALUES (2, 'Mario', 'https://media.wired.com/photos/5926c1288d4ebc5ab806b602/4:3/w_929,h_697,c_limit/SuperMarioRunHP.jpg', '2017-07-21', 'A amazing description of a videogame'),
+       (3, 'Zelda', 'https://img.lemde.fr/2017/03/02/0/510/580/580/575/575/75/0/dff5ff8_8726-138ctsr.ufq9nqaor.jpg', '2021-07-21', 'A amazing description of a videogame'),
+       (4, 'Minecraft', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9M84B6bVwoKai2k8B7fEi7D93sw3qfsK2_A&s', '2017-07-21', 'A amazing description of a videogame');
 
 INSERT INTO `Post`
 VALUES (1, 'Hello World !', 'My name is Nico.', '2025-11-13 13:37:26', 1),

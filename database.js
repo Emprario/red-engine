@@ -47,7 +47,7 @@ export async function queryPostInfos({gs, u, q}) {
         AND title LIKE ?
       GROUP BY Post.id_post
       HAVING CONCAT(',', GROUP_CONCAT(DISTINCT id_vg ORDER BY id_vg ASC SEPARATOR ',' ), ',') LIKE ?
-      ORDER BY Post.id_post
+      ORDER BY publish_date DESC
   `, [u.close, q.close, gs.close])
 }
 
